@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en" data-ui="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build a word cloud with D3 · Student guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="guide.js" defer></script>
+</head>
+<body>
+  <aside class="toc" aria-label="Contents">
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" data-set-ui="en" aria-pressed="true">EN</button>
+      <button type="button" data-set-ui="zh" aria-pressed="false">中文</button>
+    </div>
+    <p class="toc-title">Word cloud workshop</p>
+    <ol>
+      <li><a href="#start"><span lang="en">Start here</span><span lang="zh">从这里开始</span></a></li>
+      <li><a href="#method"><span lang="en">1 · What a word cloud encodes</span><span lang="zh">1 · 词云编码了什么</span></a></li>
+      <li><a href="#data"><span lang="en">2 · Know the data</span><span lang="zh">2 · 了解数据</span></a></li>
+      <li><a href="#concepts"><span lang="en">3 · Concepts</span><span lang="zh">3 · 概念</span></a></li>
+      <li><a href="#build"><span lang="en">4 · Build in 6 steps</span><span lang="zh">4 · 六步搭建</span></a>
+        <ol class="steps-toc">
+          <li><label><input type="checkbox" data-progress="s1"> 1 loadData</label></li>
+          <li><label><input type="checkbox" data-progress="s2"> 2 toTerms</label></li>
+          <li><label><input type="checkbox" data-progress="s3"> 3 countTerms</label></li>
+          <li><label><input type="checkbox" data-progress="s4"> 4 selectTerms</label></li>
+          <li><label><input type="checkbox" data-progress="s5"> 5 layoutCloud</label></li>
+          <li><label><input type="checkbox" data-progress="s6"> 6 drawCloud</label></li>
+        </ol>
+      </li>
+      <li><a href="#task1"><input type="checkbox" data-progress="t1" aria-label="Task 1 done"> <span lang="en">5 · Task 1</span><span lang="zh">5 · 任务 1</span></a></li>
+      <li><a href="#task2"><input type="checkbox" data-progress="t2" aria-label="Task 2 done"> <span lang="en">6 · Task 2</span><span lang="zh">6 · 任务 2</span></a></li>
+      <li><a href="#submit"><span lang="en">7 · Check &amp; submit</span><span lang="zh">7 · 检查与提交</span></a></li>
+    </ol>
+  </aside>
+
+  <main class="doc">
+
+    <!-- ===================== START ===================== -->
+    <section id="start">
+      <p class="kicker">Student guide · Visualize Text Data</p>
+      <h1 lang="en">Build a word cloud that shows which words people use to praise and which to complain</h1>
+      <h1 lang="zh">做一个词云：看人们用哪些词称赞，用哪些词抱怨</h1>
+      <p class="lede" lang="en">You will turn 3,000 review sentences into one word cloud per source. Size shows how often a word appears; colour shows whether it is used to praise or to complain. You build it in six steps with Copilot, check each step against a number, then change it in two ways by hand: how many words it shows, and what position means.</p>
+      <p class="lede" lang="zh">你将把 3,000 条评论句子做成每个来源一个词云。字号表示词出现的频率；颜色表示这个词更多用于称赞还是抱怨。你会用 Copilot 分六步完成，每一步都用一个数字核对，然后手动做两处修改：显示多少个词，以及位置代表什么。</p>
+      <div class="facts">
+        <div><span>Files</span>data/ (three .txt files) · index.html · style.css · wordcloud.js</div>
+        <div><span>Tools</span>VS Code · Copilot Chat · Live Server · D3 v7 from a CDN</div>
+        <div><span>Data</span><a href="https://archive.ics.uci.edu/dataset/331/sentiment+labelled+sentences" target="_blank" rel="noopener">Sentiment Labelled Sentences</a> (Kotzias et al., KDD 2015) · CC BY 4.0 · <a href="https://archive.ics.uci.edu/static/public/331/sentiment+labelled+sentences.zip">download .zip</a></div>
+      </div>
+      <p class="callout" lang="en">Open the folder with <b>Live Server</b>, not by double-clicking index.html: pages opened from <code>file://</code> cannot read local files. Put the three files in a folder called <code>data</code> (lower case: GitHub Pages is case-sensitive).</p>
+      <p class="callout" lang="zh">请用 <b>Live Server</b> 打开文件夹，不要直接双击 index.html：从 <code>file://</code> 打开的页面无法读取本地文件。把三个文件放进名为 <code>data</code> 的文件夹（小写：GitHub Pages 区分大小写）。</p>
+    </section>
+
+    <!-- ===================== 1 METHOD ===================== -->
+    <section id="method">
+      <h2><span>1</span><b lang="en">What a word cloud encodes</b><b lang="zh">词云编码了什么</b></h2>
+      <div lang="en">
+        <p>In a word cloud the <b>mark</b> is the word itself, and the main <b>channel</b> is size: <b>bigger means more often</b>. You see the whole text at a glance, and large or bright words pop out before you search for them.</p>
+        <p>It also has three blind spots:</p>
+        <ul>
+          <li><b>Position means nothing.</b> The most effective channel, position, is spent on packing words wherever they fit.</li>
+          <li><b>Long words look more important.</b> "excellent" covers more area than "bad" at the same count.</li>
+          <li><b>Cut words leave no trace.</b> Most words are rare and must be left out, and the reader cannot see how many.</li>
+        </ul>
+        <p class="callout">You will build a classic cloud: the biggest words in the centre, colour for tone. In Task 2 you give position a meaning, so each word leans towards the side it is used on: a second, redundant channel for the same attribute as colour.</p>
+      </div>
+      <div lang="zh">
+        <p>在词云中，<b>标记（mark）</b>就是词本身，主要的<b>通道（channel）</b>是大小：<b>越大表示出现越多</b>。你可以一眼看到整个文本，又大又亮的词会在你寻找之前就跳出来（popout）。</p>
+        <p>它也有三个盲点：</p>
+        <ul>
+          <li><b>位置没有意义。</b>最有效的通道——位置——被用来把词塞进空隙。</li>
+          <li><b>长词看起来更重要。</b>同样次数下，"excellent" 比 "bad" 占更大面积。</li>
+          <li><b>被删掉的词不留痕迹。</b>大多数词都很少见，必须删掉，而读者看不到删了多少。</li>
+        </ul>
+        <p class="callout">你要做的是一个经典词云：大词在中间，用颜色表示语气。在任务 2 中你会让位置有意义，使每个词偏向它被使用的那一边：位置成为与颜色表达同一属性的冗余编码（redundant encoding）。</p>
+      </div>
+    </section>
+
+    <!-- ===================== 2 DATA ===================== -->
+    <section id="data">
+      <h2><span>2</span><b lang="en">Know the data</b><b lang="zh">了解数据</b></h2>
+      <p lang="en">Each file is a flat table: one sentence per line, a tab, then the label.</p>
+      <p lang="zh">每个文件都是一张扁平表：每行一句话，一个制表符（tab），然后是标签。</p>
+      <pre class="raw"><span class="file">yelp_labelled.txt</span>
+Wow... Loved this place.<span class="tab">⇥</span>1
+Crust is not good.<span class="tab">⇥</span>0
+Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
+      <table class="card-table">
+        <thead><tr><th></th><th lang="en">Attribute type</th><th lang="zh">属性类型</th><th lang="en">Notes</th><th lang="zh">说明</th></tr></thead>
+        <tr><th>Item</th><td colspan="2"><span lang="en">One sentence · 1,000 per source</span><span lang="zh">一句话 · 每个来源 1,000 句</span></td></tr>
+        <tr><th>Text</th><td colspan="2"><span lang="en">Text, split into terms by you (step 2)</span><span lang="zh">文本，由你拆分成词项（第 2 步）</span></td></tr>
+        <tr><th>Label</th><td colspan="2"><span lang="en">Categorical: 1 = praise, 0 = complaint · 500 of each per source, by design</span><span lang="zh">类别型：1 = 称赞，0 = 抱怨 · 每个来源各 500 句（刻意平衡）</span></td></tr>
+        <tr><th>Source</th><td colspan="2"><span lang="en">Categorical: Yelp (Dining), IMDb (Film), Amazon (Tech)</span><span lang="zh">类别型：Yelp（餐饮）、IMDb（电影）、Amazon（科技）</span></td></tr>
+        <tr><th>Derived</th><td colspan="2"><span lang="en">Quantitative: count and share per term · ordinal: tone. None of these is in the file.</span><span lang="zh">定量型：每个词项的句数和称赞比例 · 有序型：语气。这些都不在文件里，需要你推导（derive）。</span></td></tr>
+      </table>
+      <h3 lang="en">Find out yourself</h3><h3 lang="zh">自己找答案</h3>
+      <details><summary><span lang="en">What separates the sentence from its label?</span><span lang="zh">句子和标签之间用什么分隔？</span></summary><p lang="en">A tab. Split on the <em>last</em> tab of the line.</p><p lang="zh">一个制表符。按每行<em>最后一个</em>制表符切分。</p></details>
+      <details><summary><span lang="en">Why does 50% mean "used equally in both"?</span><span lang="zh">为什么 50% 表示"两边用得一样多"？</span></summary><p lang="en">Every source is exactly 500 praise and 500 complaint sentences, so the midpoint is a true neutral point.</p><p lang="zh">每个来源恰好 500 句称赞、500 句抱怨，所以中点就是真正的中性点。</p></details>
+      <details><summary><span lang="en">Can one sentence tell you whether a word is positive?</span><span lang="zh">一句话能说明一个词是正面的吗？</span></summary><p lang="en">No. The label belongs to the whole sentence. You need many sentences, counted together.</p><p lang="zh">不能。标签属于整句话，需要把许多句子合起来统计。</p></details>
+      <details><summary><span lang="en">How many distinct words appear only once?</span><span lang="zh">有多少不同的词只出现一次？</span></summary><p lang="en">About 58% of 5,069. This long tail is why every word cloud must leave words out.</p><p lang="zh">5,069 个词中约 58%。这条长尾（long tail）就是每个词云都必须舍弃一些词的原因。</p></details>
+    </section>
+
+    <!-- ===================== 3 CONCEPTS ===================== -->
+    <section id="concepts">
+      <h2><span>3</span><b lang="en">Concepts</b><b lang="zh">概念</b></h2>
+
+      <h3 lang="en">From a sentence to terms</h3><h3 lang="zh">从句子到词项</h3>
+      <div class="pipeline-example">
+        <div><span>Sentence</span>The food isn't very good.</div>
+        <div><span>Tokens</span>the · food · is · not · very · good</div>
+        <div><span>Terms</span><b>food</b> · <b><em>not good</em></b></div>
+      </div>
+      <ul lang="en">
+        <li><b>Tokenization</b>: lowercase, split contractions (<em>isn't</em> → <em>is not</em>; careful with <em>can't</em> and <em>won't</em>), keep letters only.</li>
+        <li><b>Stop words</b>: a written-out list of grammar words (<em>the, of, is, they</em>) that are dropped.</li>
+        <li><b>Negation</b>: <em>not</em>, <em>no</em> and <em>never</em> join the next real word into one term; <em>very</em> in between is skipped.</li>
+        <li><b>Count sentences, not words</b>: a term counts once per sentence, because the label belongs to the sentence.</li>
+      </ul>
+      <ul lang="zh">
+        <li><b>分词（tokenization）</b>：转小写，拆开缩写（<em>isn't</em> → <em>is not</em>；注意 <em>can't</em> 和 <em>won't</em>），只保留字母。</li>
+        <li><b>停用词（stop words）</b>：一份写明的语法词列表（<em>the, of, is, they</em>），统计前删除。</li>
+        <li><b>否定处理</b>：<em>not</em>、<em>no</em>、<em>never</em> 与后面第一个实词合成一个词项；中间的 <em>very</em> 跳过。</li>
+        <li><b>按句计数</b>：一个词项在一句话里只算一次，因为标签属于整句。</li>
+      </ul>
+
+      <h3 lang="en">Smoothed share of praise</h3><h3 lang="zh">平滑后的称赞比例</h3>
+      <p class="formula">share = (praise + 5) ÷ (praise + complaint + 10)</p>
+      <p lang="en">Like a rating that needs enough reviews: five imaginary sentences on each side keep a word seen three times from jumping to 100%.</p>
+      <p lang="zh">就像评分需要足够多的评价：两边各加 5 个"虚拟句子"，让只出现 3 次的词不会直接跳到 100%。</p>
+      <div class="calc" id="calc">
+        <p class="calc-title" lang="en">Try it</p><p class="calc-title" lang="zh">试一试</p>
+        <div class="calc-row">
+          <label><span lang="en">praise sentences</span><span lang="zh">称赞句数</span> <input type="number" id="calc-praise" min="0" value="64"></label>
+          <label><span lang="en">complaint sentences</span><span lang="zh">抱怨句数</span> <input type="number" id="calc-complaint" min="0" value="0"></label>
+          <div class="calc-out"><span id="calc-share">—</span><span class="chip" id="calc-tone">—</span></div>
+        </div>
+        <div class="calc-examples">
+          <button type="button" data-p="64" data-c="0">64 / 0</button>
+          <button type="button" data-p="59" data-c="61">59 / 61</button>
+          <button type="button" data-p="6" data-c="0">6 / 0</button>
+          <button type="button" data-p="7" data-c="0">7 / 0</button>
+          <button type="button" data-p="0" data-c="16">0 / 16</button>
+        </div>
+      </div>
+
+      <h3 lang="en">Three tones: a diverging palette</h3><h3 lang="zh">三种语气：发散型配色</h3>
+      <table class="tones">
+        <tr><td><i class="sw praise"></i></td><td>≥ 70%</td><td><span lang="en">praise</span><span lang="zh">称赞</span></td></tr>
+        <tr><td><i class="sw neutral"></i></td><td>30–70%</td><td><span lang="en">either way</span><span lang="zh">两边都用</span></td></tr>
+        <tr><td><i class="sw complaint"></i></td><td>≤ 30%</td><td><span lang="en">complaint</span><span lang="zh">抱怨</span></td></tr>
+      </table>
+      <p class="small" lang="en">The data has a meaningful midpoint (50%), so a neutral grey sits there and saturated colours at the ends. A word needs at least 7 one-sided sentences to reach 70%: try 6 / 0 and 7 / 0 above.</p>
+      <p class="small" lang="zh">数据有一个有意义的中点（50%），所以中点用中性灰，两端用饱和色。一个词至少需要 7 句同一边的句子才能达到 70%：试试上面的 6 / 0 和 7 / 0。</p>
+
+      <h3 lang="en">Size and layout</h3><h3 lang="zh">字号与布局</h3>
+      <ul lang="en">
+        <li><b>Square-root scale.</b> Area grows with the square of font size, so a √ scale keeps a word's area proportional to its count. Use <em>one</em> scale for all three clouds (a common scale), so they can be compared.</li>
+        <li><b>Spiral layout.</b> Place the largest word first at its target, then walk out along a spiral until the word's box overlaps nothing. No randomness: everyone gets the same picture.</li>
+        <li><b>Small multiples.</b> One cloud per source, same encoding, stacked.</li>
+      </ul>
+      <ul lang="zh">
+        <li><b>平方根比例尺。</b>面积随字号的平方增长，所以用 √ 比例尺让词的面积与次数成正比。三个词云共用<em>一个</em>比例尺（共同尺度），才能互相比较。</li>
+        <li><b>螺旋布局。</b>最大的词先放在目标位置，其余的词沿螺旋向外走，直到不与任何词重叠。不用随机数：每个人得到相同的图。</li>
+        <li><b>小多图（small multiples）。</b>每个来源一个词云，编码相同，上下排列。</li>
+      </ul>
+      <figure class="wire" aria-label="Sketch of an Archimedean spiral starting from a target point">
+        <svg viewBox="0 0 720 200" role="img" id="spiral-sketch"></svg>
+        <figcaption lang="en">A spiral from the target point (dot). In the base every word starts at the centre; in Task 2 the start moves right for praise and left for complaints.</figcaption>
+        <figcaption lang="zh">从目标点（圆点）出发的螺旋。基础版中每个词都从中心出发；任务 2 中称赞词的起点向右、抱怨词向左移动。</figcaption>
+      </figure>
+    </section>
+
+    <!-- ===================== 4 BUILD ===================== -->
+    <section id="build">
+      <h2><span>4</span><b lang="en">Build in 6 steps</b><b lang="zh">六步搭建</b></h2>
+      <p lang="en">Each step is one function in <code>wordcloud.js</code>. Write your own request to Copilot from the points under <b>Tell Copilot</b>, reload the page, and compare the console with the <b>checkpoint</b> before you go on. Put every number you choose in one <code>CONFIG</code> object at the top of the file.</p>
+      <p lang="zh">每一步是 <code>wordcloud.js</code> 里的一个函数。根据 <b>告诉 Copilot</b> 下面的要点，自己写给 Copilot 的请求，刷新页面，并在继续之前把控制台输出和<b>检查点</b>对比。把你选定的所有数字放进文件顶部的一个 <code>CONFIG</code> 对象。</p>
+
+      <article class="step" id="s1">
+        <h3>1 · loadData</h3>
+        <p class="sig">loadData() → [{ text, label, source }]</p>
+        <div class="ask"><b lang="en">Tell Copilot</b><b lang="zh">告诉 Copilot</b>
+          <ul lang="en"><li>the three file paths and a source name for each</li><li>where the label is on each line</li><li>what to log when done</li></ul>
+          <ul lang="zh"><li>三个文件路径以及各自的来源名</li><li>每行的标签在哪里</li><li>完成后在控制台输出什么</li></ul>
+        </div>
+        <p class="look"><span>Look for</span> fetch · lastIndexOf · Number(</p>
+        <p class="checkpoint">Checkpoint · 3,000 sentences</p>
+        <p class="mistake" lang="en">Common mistake · opening the page from file://, or a folder named Data</p>
+        <p class="mistake" lang="zh">常见错误 · 从 file:// 打开页面，或文件夹名写成 Data</p>
+      </article>
+
+      <article class="step" id="s2">
+        <h3>2 · toTerms</h3>
+        <p class="sig">toTerms(text) → Set of terms</p>
+        <div class="ask"><b lang="en">Tell Copilot</b><b lang="zh">告诉 Copilot</b>
+          <ul lang="en"><li>the order of the contraction rules (can't, won't first)</li><li>which negators join, which words are skipped, and how far it may look ahead</li><li>that a joined word must not count again on its own</li><li>your stop-word list, written out in CONFIG</li></ul>
+          <ul lang="zh"><li>缩写规则的顺序（先处理 can't、won't）</li><li>哪些否定词要合并、哪些词跳过、最多往后看几个词</li><li>被合并的词不能再单独计数</li><li>写在 CONFIG 里的停用词表</li></ul>
+        </div>
+        <p class="look"><span>Look for</span> toLowerCase · replace · new Set · NEGATORS</p>
+        <p class="checkpoint">Checkpoint · "The food isn't very good." → food, not good</p>
+        <p class="mistake" lang="en">Common mistake · "very" or "good" still counted after joining "not very good"</p>
+        <p class="mistake" lang="zh">常见错误 · 合并 "not very good" 后仍单独计算了 "very" 或 "good"</p>
+      </article>
+
+      <article class="step" id="s3">
+        <h3>3 · countTerms</h3>
+        <p class="sig">countTerms(sentences) → per source: [{ term, praise, complaint, count, share, tone, example }]</p>
+        <div class="ask"><b lang="en">Tell Copilot</b><b lang="zh">告诉 Copilot</b>
+          <ul lang="en"><li>count once per sentence, separately per source</li><li>the smoothed share and the two colour cut-offs from section 3</li><li>keep one example sentence per side for the tooltip</li></ul>
+          <ul lang="zh"><li>按句计数，每个来源分开统计</li><li>第 3 节的平滑比例和两个颜色分界</li><li>每边保留一句例句，供提示框使用</li></ul>
+        </div>
+        <p class="look"><span>Look for</span> new Map · praise += · CONFIG.prior</p>
+        <p class="checkpoint">Checkpoint · Dining: good 69/9 84% · great 64/0 93% · food 59/61 49%</p>
+      </article>
+
+      <article class="step" id="s4">
+        <h3>4 · selectTerms</h3>
+        <p class="sig">selectTerms(terms) → { kept, leftOut }</p>
+        <div class="ask"><b lang="en">Tell Copilot</b><b lang="zh">告诉 Copilot</b>
+          <ul lang="en"><li>a rule, not a number of words: the fewest sentences a term needs to be able to lean (see the calculator)</li><li>a fixed sort order, so ties never change places</li><li>return how many terms were left out</li></ul>
+          <ul lang="zh"><li>用规则而不是固定数量：一个词项至少要有多少句才"可能"偏向一边（看计算器）</li><li>固定的排序方式，让并列项不会换位置</li><li>返回被删掉的词项数量</li></ul>
+        </div>
+        <p class="look"><span>Look for</span> filter · sort · localeCompare</p>
+        <p class="checkpoint">Checkpoint · kept Dining 164 · Film 186 · Tech 153</p>
+        <p class="hint" lang="en">Both tasks replace this step. Write your rule on the page.</p>
+        <p class="hint" lang="zh">两个任务都会替换这一步。请把你的规则写在页面上。</p>
+      </article>
+
+      <article class="step" id="s5">
+        <h3>5 · layoutCloud</h3>
+        <p class="sig">layoutCloud(terms, …) → [{ x, y, fontSize, … }], unplaced</p>
+        <div class="ask"><b lang="en">Tell Copilot</b><b lang="zh">告诉 Copilot</b>
+          <ul lang="en"><li>one square-root size scale for all clouds, with your font range</li><li>measure each word's width before placing it</li><li>largest first, an Archimedean spiral from the centre, a box overlap test (a grid keeps it fast)</li><li>grow the bands if any word is left unplaced</li></ul>
+          <ul lang="zh"><li>三个词云共用一个平方根字号比例尺，以及你的字号范围</li><li>放置前先测量每个词的宽度</li><li>从大到小，从中心出发的阿基米德螺旋，矩形重叠检测（用网格加速）</li><li>如果有词放不下，就加高区域</li></ul>
+        </div>
+        <p class="look"><span>Look for</span> scaleSqrt · measureText · Math.cos · target</p>
+        <p class="checkpoint">Checkpoint · the biggest words (food, movie, phone) sit in the middle · 0 unplaced</p>
+      </article>
+
+      <article class="step" id="s6">
+        <h3>6 · drawCloud</h3>
+        <p class="sig">drawCloud(layout) → one SVG, three clouds</p>
+        <div class="ask"><b lang="en">Tell Copilot</b><b lang="zh">告诉 Copilot</b>
+          <ul lang="en"><li>a keyed data join: one &lt;text&gt; per term, key = source + term</li><li>colour by tone, italic for "not …" terms, grey words dimmer</li><li>under each cloud, how many words were left out</li><li>a tooltip with the counts and one real sentence</li></ul>
+          <ul lang="zh"><li>带 key 的数据绑定：每个词项一个 &lt;text&gt;，key = 来源 + 词项</li><li>按语气上色，"not …" 词项用斜体，灰色词调暗</li><li>每个词云下方写出被删掉的词数</li><li>显示计数和一句真实例句的提示框</li></ul>
+        </div>
+        <p class="look"><span>Look for</span> selectAll · .data( · .join( · .transition( · .on('mousemove'</p>
+        <p class="checkpoint">Checkpoint · 503 words drawn · hover "minutes": 0 praise / 16 complaints</p>
+        <p class="hint" lang="en">Write one sentence on your page that explains your colours.</p>
+        <p class="hint" lang="zh">在页面上写一句话，说明你的配色。</p>
+      </article>
+    </section>
+
+    <!-- ===================== TASK 1 ===================== -->
+    <section id="task1">
+      <h2><span>5</span><b lang="en">Task 1 · How many words? Top 10, 50, 100, 1000</b><b lang="zh">任务 1 · 显示多少个词？前 10、50、100、1000</b></h2>
+      <div class="brief">
+        <div><h4 lang="en">Objective</h4><h4 lang="zh">目标</h4>
+          <p lang="en">Replace the rule "7 sentences or more" with the most common filter: sort by count and keep the top N. See what each N shows, and what the cut does to tied words.</p>
+          <p lang="zh">把"至少 7 句"的规则换成最常见的筛选方式：按句数排序，保留前 N 个。看看不同的 N 显示了什么，以及截断对并列的词有什么影响。</p></div>
+        <div><h4 lang="en">Requirements</h4><h4 lang="zh">要求</h4>
+          <ol lang="en"><li>Change selectTerms into selectTopN(terms, N): sort by count (ties alphabetical), keep the first N.</li><li>Try N = 10, 50, 100 and 1000. Start the size domain at 1.</li><li>Under each cloud, write the count at rank N and how many terms share it.</li></ol>
+          <ol lang="zh"><li>把 selectTerms 改成 selectTopN(terms, N)：按句数排序（并列按字母），保留前 N 个。</li><li>分别试 N = 10、50、100、1000。字号比例尺的定义域从 1 开始。</li><li>在每个词云下方写出第 N 名的句数，以及有多少词项与它并列。</li></ol></div>
+        <div><h4 lang="en">Where</h4><h4 lang="zh">位置</h4>
+          <p>Step 4 · main() · step 6 note</p><p class="look"><span>Look for</span> selectTerms · slice · band-note · domain(</p></div>
+      </div>
+      <details class="hint-box"><summary lang="en">Hint</summary><summary lang="zh">提示</summary><p lang="en">Ties: count every term whose count equals the count of the N-th term. The ones after position N are cut off only because of the alphabet.</p><p lang="zh">并列：数一数有多少词项的句数等于第 N 名。排在第 N 名之后的那些，只是因为字母顺序被截掉了。</p></details>
+      <details class="hint-box"><summary lang="en">Bonus</summary><summary lang="zh">加分</summary><p lang="en">Buttons for 10 / 50 / 100 / 1000 that redraw the clouds.</p><p lang="zh">加 10 / 50 / 100 / 1000 按钮，点击后重画词云。</p></details>
+      <figure class="wire" aria-label="Layout sketch: four buttons above three empty cloud areas">
+        <svg viewBox="0 0 720 230" role="img">
+          <text x="0" y="17" class="w-label">Top N</text>
+          <rect x="50" y="0" width="44" height="26" rx="4" class="w-control"/><text x="72" y="17" text-anchor="middle" class="w-label">10</text>
+          <rect x="100" y="0" width="44" height="26" rx="4" class="w-control"/><text x="122" y="17" text-anchor="middle" class="w-label">50</text>
+          <rect x="150" y="0" width="44" height="26" rx="4" class="w-control"/><text x="172" y="17" text-anchor="middle" class="w-label">100</text>
+          <rect x="200" y="0" width="52" height="26" rx="4" class="w-control"/><text x="226" y="17" text-anchor="middle" class="w-label">1000</text>
+          <g transform="translate(0,40)"><text x="8" y="16" class="w-label">Dining</text><ellipse cx="360" cy="30" rx="170" ry="24" class="w-cloud"/><text x="8" y="56" class="w-note">Top N · rank N = … sentences · … terms share that count</text></g>
+          <g transform="translate(0,100)"><text x="8" y="16" class="w-label">Film</text><ellipse cx="360" cy="30" rx="170" ry="24" class="w-cloud"/></g>
+          <g transform="translate(0,160)"><text x="8" y="16" class="w-label">Tech</text><ellipse cx="360" cy="30" rx="170" ry="24" class="w-cloud"/></g>
+        </svg>
+        <figcaption lang="en">Layout sketch only.</figcaption><figcaption lang="zh">仅为布局草图。</figcaption>
+      </figure>
+      <p class="checkpoint">Checkpoint · Dining: top 10 ends at 38 sentences · top 100 ends at 9 sentences, 14 terms share it, 9 cut off · top 1000 ends at 1 sentence, 1,227 terms share it, 1,002 cut off</p>
+      <h3 lang="en">Talk about it</h3><h3 lang="zh">讨论</h3>
+      <ul class="questions" lang="en"><li>Why are the top 10 almost all grey nouns?</li><li>At top 1000, which words made the cut, and why those?</li><li>Which is easier to defend: "top 100" or "7 sentences or more"?</li></ul>
+      <ul class="questions" lang="zh"><li>为什么前 10 个几乎都是灰色名词？</li><li>前 1000 个中，哪些词被选中了？为什么是它们？</li><li>"前 100 个"和"至少 7 句"，哪个更站得住脚？</li></ul>
+    </section>
+
+    <!-- ===================== TASK 2 ===================== -->
+    <section id="task2">
+      <h2><span>6</span><b lang="en">Task 2 · Give position a meaning</b><b lang="zh">任务 2 · 让位置有意义</b></h2>
+      <div class="brief">
+        <div><h4 lang="en">Objective</h4><h4 lang="zh">目标</h4>
+          <p lang="en">Use the most effective channel, position, for the most important attribute, the share of praise. Keep one cloud: only each word's starting point moves.</p>
+          <p lang="zh">把最有效的通道——位置——用于最重要的属性：称赞比例。仍然保持一个词云：只移动每个词的起点。</p></div>
+        <div><h4 lang="en">Requirements</h4><h4 lang="zh">要求</h4>
+          <ol lang="en"><li>Add <code>drift</code> to CONFIG (try 0.6).</li><li>In layoutCloud, change the target: centre.x + drift × (share − 0.5) × width.</li><li>Add an axis above the clouds: complaint ← → praise, ticks at 0–100% placed with the same formula.</li></ol>
+          <ol lang="zh"><li>在 CONFIG 中加入 <code>drift</code>（试试 0.6）。</li><li>在 layoutCloud 中修改目标：centre.x + drift × (比例 − 0.5) × 宽度。</li><li>在词云上方加一条坐标轴：抱怨 ← → 称赞，0–100% 的刻度用同一个公式定位。</li></ol></div>
+        <div><h4 lang="en">Where</h4><h4 lang="zh">位置</h4>
+          <p>CONFIG · step 5 (one line) · step 6</p><p class="look"><span>Look for</span> target · centre.x · selectAll('text')</p></div>
+      </div>
+      <details class="hint-box"><summary lang="en">Hint</summary><summary lang="zh">提示</summary><p lang="en">With drift = 1 the words reach the edges and the cloud breaks into islands; with 0 nothing changes. Somewhere between keeps a cloud and shows a lean.</p><p lang="zh">drift = 1 时词会跑到边缘，词云裂成几块；drift = 0 时没有变化。取中间的值，既保持一个词云，又能看出偏向。</p></details>
+      <details class="hint-box"><summary lang="en">Bonus</summary><summary lang="zh">加分</summary><p lang="en">A slider for drift, from 0 to 1, that redraws the clouds with a transition.</p><p lang="zh">加一个 drift 滑块（0 到 1），拖动时用过渡动画重画词云。</p></details>
+      <figure class="wire" aria-label="Layout sketch: an axis from complaint to praise above three empty cloud areas">
+        <svg viewBox="0 0 720 230" role="img">
+          <text x="0" y="17" class="w-axis complaint">← complaints</text><text x="360" y="17" text-anchor="middle" class="w-axis">share of praise</text><text x="720" y="17" text-anchor="end" class="w-axis praise">praise →</text>
+          <line x1="360" y1="28" x2="360" y2="226" class="w-mid"/>
+          <g transform="translate(0,40)"><text x="8" y="16" class="w-label">Dining</text><ellipse cx="360" cy="30" rx="200" ry="24" class="w-cloud"/></g>
+          <g transform="translate(0,100)"><text x="8" y="16" class="w-label">Film</text><ellipse cx="360" cy="30" rx="200" ry="24" class="w-cloud"/></g>
+          <g transform="translate(0,160)"><text x="8" y="16" class="w-label">Tech</text><ellipse cx="360" cy="30" rx="200" ry="24" class="w-cloud"/></g>
+        </svg>
+        <figcaption lang="en">Layout sketch only. Where the words go is what you find out.</figcaption><figcaption lang="zh">仅为布局草图。词会去哪里，由你自己去发现。</figcaption>
+      </figure>
+      <p class="checkpoint">Checkpoint · drift 0.6: great (93%) right of centre, bad (19%) left · 503 words, 0 unplaced</p>
+      <h3 lang="en">Talk about it</h3><h3 lang="zh">讨论</h3>
+      <ul class="questions" lang="en"><li>What can you see now that colour alone did not show?</li><li>Why do the biggest words stay in the middle?</li><li>At what drift does it stop looking like one cloud?</li></ul>
+      <ul class="questions" lang="zh"><li>现在你能看到哪些只靠颜色看不到的东西？</li><li>为什么最大的词仍然在中间？</li><li>drift 到多少时，它就不再像一个词云了？</li></ul>
+    </section>
+
+    <!-- ===================== SUBMIT ===================== -->
+    <section id="submit">
+      <h2><span>7</span><b lang="en">Check &amp; submit</b><b lang="zh">检查与提交</b></h2>
+      <ul class="checklist" lang="en">
+        <li><label><input type="checkbox" data-progress="c1"> Every checkpoint matches your console</label></li>
+        <li><label><input type="checkbox" data-progress="c2"> Your inclusion rule and your colour sentence are written on the page</label></li>
+        <li><label><input type="checkbox" data-progress="c3"> The layout uses no randomness</label></li>
+      </ul>
+      <ul class="checklist" lang="zh">
+        <li><label><input type="checkbox" data-progress="c1"> 每个检查点都与你的控制台一致</label></li>
+        <li><label><input type="checkbox" data-progress="c2"> 页面上写明了筛选规则和配色说明</label></li>
+        <li><label><input type="checkbox" data-progress="c3"> 布局不使用随机数</label></li>
+      </ul>
+      <div class="callout" lang="en"><b>In-class participation</b>, one PDF, on the day of the lecture: a screenshot of your working word cloud, then for each task a short explanation of how you did it and the code you changed (snippet or screenshot). It does not need to be perfect; show your effort.</div>
+      <div class="callout" lang="zh"><b>课堂参与提交</b>：当天提交一个 PDF，包括可运行词云的截图；每个任务附上简短说明（你是怎么做的）以及修改的代码（片段或截图）。不需要完美，展示你的努力即可。</div>
+      <h3 lang="en">Troubleshooting</h3><h3 lang="zh">常见问题</h3>
+      <dl class="faq" lang="en">
+        <dt>The data does not load</dt><dd>Open the folder with Live Server, and check the folder name is data in lower case.</dd>
+        <dt>"d3 is not defined"</dt><dd>The D3 script tag must come before wordcloud.js in index.html.</dd>
+        <dt>Words overlap</dt><dd>Measure the width with the same font, size and weight you draw with, and wait for the web font to load first.</dd>
+        <dt>Numbers are a little off</dt><dd>Check the contraction rules (can't, won't) and that a term counts once per sentence.</dd>
+        <dt>Top 1000 is slow</dt><dd>Check the overlap test only looks at nearby words (the grid in step 5).</dd>
+      </dl>
+      <dl class="faq" lang="zh">
+        <dt>数据加载不出来</dt><dd>用 Live Server 打开文件夹，并确认文件夹名是小写的 data。</dd>
+        <dt>"d3 is not defined"</dt><dd>index.html 里 D3 的 script 标签必须在 wordcloud.js 之前。</dd>
+        <dt>词互相重叠</dt><dd>测量宽度时使用与绘制相同的字体、字号和字重，并先等网络字体加载完成。</dd>
+        <dt>数字有一点对不上</dt><dd>检查缩写规则（can't、won't），以及一个词项在一句中只算一次。</dd>
+        <dt>前 1000 个很慢</dt><dd>检查重叠检测是否只看附近的词（第 5 步的网格）。</dd>
+      </dl>
+    </section>
+
+    <footer class="foot">Data: Sentiment Labelled Sentences, Kotzias et al., KDD 2015 · CC BY 4.0.</footer>
+  </main>
+</body>
+</html>

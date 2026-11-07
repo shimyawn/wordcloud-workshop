@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Praise and complaints, in different words</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="wordcloud.js" defer></script>
+</head>
+<body>
+  <header class="intro">
+    <h1>People praise and complain about the same things, in different words</h1>
+    <p class="subtitle">3,000 review sentences · Yelp, IMDb, Amazon · 500 praise / 500 complaints each</p>
+    <div class="controls"><label>drift <output id="drift-value">0.60</output><input type="range" id="drift" min="0" max="1" step="0.05" value="0.6"></label></div>
+    <p class="status" id="status">Reading 3,000 sentences…</p>
+  </header>
+
+  <div class="axis" id="axis" aria-hidden="true">
+    <span class="axis-side complaint">← Said in complaints</span>
+    <span class="axis-title">Share of praise sentences</span>
+    <span class="axis-side praise">Said in praise →</span>
+    <svg id="axis-ticks"></svg>
+  </div>
+
+  <main class="stage" id="stage">
+    <svg id="cloud" role="img" aria-label="Word cloud of review words in three bands, placed by how often each word appears in praise sentences"></svg>
+  </main>
+
+  <div class="tooltip" id="tooltip" hidden></div>
+
+  <footer class="how">
+    <h2>How to read</h2>
+    <p><strong>One cloud per source.</strong> The largest words are placed first, at the centre, and every other word spirals outwards until it finds space. <strong>Position</strong> also carries meaning: each word starts from its share of praise sentences, so praise words gather on the right and complaint words on the left. Five imaginary sentences are added on each side, so a word seen three times cannot jump to 0% or 100%. The dataset is built 500 : 500, so 50% (the centre) means "used equally in both".</p>
+    <p><strong>Size</strong> is the number of sentences that contain the word, on one square-root scale shared by all three clouds. <strong>Colour</strong>: green at 70% or more, pink at 30% or less (in this data that roughly matches statistical significance), grey between. <em>Italic</em> terms are "not …" phrases counted as one term.</p>
+    <p><strong>Shown</strong>: every term found in at least 7 sentences of its source, the fewest that can reach 70% or 30%. Grammar words (the, of, is, they …) are removed. Labels belong to whole sentences, not to words: hover a word to read one.</p>
+    <p class="source">Data: Sentiment Labelled Sentences, Kotzias et al., KDD 2015 (UCI Machine Learning Repository).</p>
+  </footer>
+</body>
+</html>
