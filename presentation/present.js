@@ -125,6 +125,10 @@ document.querySelectorAll('iframe').forEach(frame => frame.addEventListener('loa
   } catch (e) { /* different origin: ignore */ }
 }));
 
+addEventListener('hashchange', () => {                 // a link like #4-3 typed into the address bar
+  const k = slides.findIndex(s => `#${s.dataset.id}` === location.hash);
+  if (k >= 0 && k !== current) show(k);
+});
 const start = slides.findIndex(s => `#${s.dataset.id}` === location.hash);
 show(start >= 0 ? start : 0);
 
