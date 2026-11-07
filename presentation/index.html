@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="code-snapshot.js"></script>
   <script src="present.js" defer></script>
 </head>
 <body>
@@ -148,354 +147,120 @@ The food, amazing.<span class="tab">⇥</span>1</pre>
     <!-- ===================== 4 · THE CODE ===================== -->
     <section class="slide" data-menu="4">
       <p class="label">4 · The code</p>
-      <h2>Four files, six functions, one library.</h2>
+      <h2>Six functions. The last three turn data into marks and channels.</h2>
       <div class="pipeline">
-        <div class="step"><b>1 loadData</b><span>3,000 sentences</span></div>
-        <div class="step"><b>2 toTerms</b><span>words + not-phrases</span></div>
-        <div class="step"><b>3 countTerms</b><span>counts → share → tone</span></div>
-        <div class="step key"><b>4 selectTerms</b><span>in 7 sentences or more</span></div>
-        <div class="step"><b>5 layoutCloud</b><span>spiral packing from the centre</span></div>
-        <div class="step"><b>6 drawCloud</b><span>data join, tooltip</span></div>
-        <div class="step task"><b>Task 1</b><span>step 4: a top N</span></div>
-        <div class="step task"><b>Task 2</b><span>steps 4–6: one cloud, three corners</span></div>
+        <div class="step"><b>1 loadData</b><span>read 3,000 sentences</span></div>
+        <div class="step"><b>2 toTerms</b><span>preprocessing (part 2)</span></div>
+        <div class="step"><b>3 countTerms</b><span>derive count, share, tone</span></div>
+        <div class="step"><b>4 selectTerms</b><span>filter: 7 sentences or more</span></div>
+        <div class="step key"><b>Scales</b><span>count → size · tone → colour</span></div>
+        <div class="step key"><b>5 layoutCloud</b><span>where each word goes</span></div>
+        <div class="step key"><b>6 drawCloud</b><span>data join · tooltip</span></div>
+        <div class="step task"><b>Tasks</b><span>T1 changes step 4 · T2 changes step 5</span></div>
       </div>
-      <p class="note"><code>data/</code> three text files · <code>index.html</code> the page skeleton · <code>style.css</code> type and colour · <code>wordcloud.js</code> CONFIG, six steps and <code>main()</code>. Steps 1–4 are data; steps 5–6 are the picture. Every step prints a checkpoint to the console.</p>
-      <aside class="notes">The split matters for Copilot: one prompt per function, one number to check per prompt.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-file="html" data-lines="14-34" data-focus="15-25">
-      <div class="code-text">
-        <p class="label">4 · The code · index.html</p>
-        <h2>The page: empty containers for D3 to fill.</h2>
-        <p>HTML holds structure only. Every word is drawn later by JavaScript into one <code>&lt;svg&gt;</code>.</p>
-        <ol class="anno">
-          <li data-lines="2-6"><b>Header and status.</b> The status line says "Reading…" until the data loads, and shows the error if a file is missing.</li>
-          <li data-lines="8-10"><b>One SVG.</b> SVG text stays sharp at any size and can be hovered: each word is an element D3 can bind data to.</li>
-          <li data-lines="12"><b>One tooltip.</b> A single box, moved and refilled on hover, rather than one per word.</li>
-          <li data-lines="14-20"><b>How to read.</b> The legend in words. A chart that needs explaining should carry its explanation.</li>
-        </ol>
-        
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Keep this short. The page has no words in it. D3 makes them from data.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="CONFIG" data-focus="1-26">
-      <div class="code-text">
-        <p class="label">4 · The code · CONFIG</p>
-        <h2>Every decision is a named number, in one place.</h2>
-        <ol class="anno">
-          <li data-lines="7-10"><b>The data decisions.</b> prior 5, 70% / 30%, 7 sentences: each one argued in part 3. Change one and the picture changes.</li>
-                    <li data-lines="11-18"><b>Word lists.</b> Negators, intensifiers to skip, and about 110 grammar words (<dfn data-g="stopwords">stop words</dfn>). Written out, so anyone can see what was removed.</li>
-          <li data-lines="19-23"><b>Layout numbers.</b> Cloud height, font range 10–40 px (the <dfn data-g="scale">range</dfn> of the size scale) and the spiral's step and spacing.</li>
-          <li data-lines="28-30"><b>Sets.</b> Lists become <code>Set</code>s for fast "is this word in it?" checks inside loops.</li>
-        </ol>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Students will tweak these. A CONFIG object is also what makes Copilot output easy to check.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="1" data-focus="2-15">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 1 · loadData</p>
-        <h2>Three files become one list of sentences.</h2>
-        <ol class="anno">
-          <li data-lines="5-6"><b>fetch, one file at a time.</b> <code>await</code> waits for each file. If one is missing, the error names it; this is why the page must run on a local server.</li>
-          <li data-lines="7-8"><b>Split on the last tab.</b> The label always comes after the last tab, even if a sentence contained one.</li>
-          <li data-lines="10"><b>One object per sentence.</b> text, label as a number, and source: the three <dfn data-g="attribute">attributes</dfn> of each <dfn data-g="item">item</dfn>.</li>
-          <li data-lines="13"><b>Checkpoint.</b> Prints the count before anything is drawn.</li>
-        </ol>
-        <p class="check">Checkpoint · [Step 1] 3000 sentences</p>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">If they see fewer than 3,000, the usual cause is a wrong path or a capital D in Data.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="2" data-focus="2-8">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 2 · toTerms (1/2)</p>
-        <h2>Clean the text before counting it.</h2>
-        <p>This is <dfn data-g="tokenization">tokenization</dfn>: turning a sentence into a list of words, from which we <dfn data-g="derived">derive</dfn> new data.</p>
-        <ol class="anno">
-          <li data-lines="3"><b>Lowercase.</b> "Great" and "great" are one word.</li>
-          <li data-lines="4-6"><b>Contractions first.</b> can't → can not, won't → will not, then any n't → not. Without the first two, can't becomes "ca not".</li>
-          <li data-lines="7"><b>Drop 's, 're, 've …</b> so "it's" counts as "it", a grammar word.</li>
-          <li data-lines="8"><b>Letters only.</b> Numbers and punctuation are dropped; <code>|| []</code> handles an empty sentence.</li>
-        </ol>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">The order of the replace calls matters. That is the kind of detail Copilot gets wrong unless the prompt says it.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="2" data-focus="10-25">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 2 · toTerms (2/2)</p>
-        <h2>"isn't very good" becomes one term: "not good".</h2>
-        <ol class="anno">
-          <li data-lines="10"><b>A Set, not a list.</b> A word used twice in one sentence counts once: we count sentences, because the label belongs to the sentence.</li>
-          <li data-lines="13-15"><b>Look ahead past "very".</b> After a negator, skip up to two grammar words or intensifiers.</li>
-          <li data-lines="17-19"><b>Join, then use up.</b> "not" + the next real word becomes one term, and <code>i = j</code> stops "good" from also counting alone.</li>
-          <li data-lines="23"><b>Everything else.</b> Keep words longer than one letter that are not stop words.</li>
-        </ol>
-        <p class="check">Checkpoint · "The food isn't very good." → food, not good</p>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">A common bug: "very" still counted after joining. The checkpoint catches it: that is why each step has one.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="3" data-focus="2-13">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 3 · countTerms (1/2)</p>
-        <h2>Count sentences, per source, per side.</h2>
-        <ol class="anno">
-          <li data-lines="3"><b>A Map per source.</b> Dining, Film and Tech are counted apart, because their vocabularies differ.</li>
-          <li data-lines="6"><b>Each term once per sentence.</b> toTerms returns a Set.</li>
-          <li data-lines="7-10"><b>Two counters per term.</b> praise and complaint: the raw evidence behind every colour.</li>
-          <li data-lines="11"><b>Keep one example per side.</b> <code>??=</code> stores the first sentence only. The tooltip shows it later.</li>
-        </ol>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">This is aggregation: 3,000 items become about 5,000 terms per source with two counts each.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="3" data-focus="14-22">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 3 · countTerms (2/2)</p>
-        <h2>Turn two counts into three derived attributes.</h2>
-        <ol class="anno">
-          <li data-lines="17"><b>count.</b> Quantitative. It will drive size.</li>
-          <li data-lines="18"><b>share, smoothed.</b> (praise + 5) ÷ (count + 10): a small count cannot jump to 0% or 100%. It will drive horizontal position.</li>
-          <li data-lines="19"><b>tone.</b> The share cut into three ordered categories. It will drive colour hue.</li>
-        </ol>
-        <p class="check">Checkpoint · Dining: good 69/9 84% · great 64/0 93% · food 59/61 49% · not good 0/13 22% · bad 0/16 19%</p>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Derived attributes are the bridge between data and channels. Name them aloud: count → size, share → x, tone → colour.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="4" data-focus="1-6">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 4 · selectTerms</p>
-        <h2>A rule, not a number of words.</h2>
-        <ol class="anno">
-          <li data-lines="3"><b>Filter by evidence.</b> Keep a term in 7 sentences or more: the fewest that can reach a colour.</li>
-          <li data-lines="4"><b>Sort big to small.</b> Ties broken alphabetically, so the order never changes. Step 5 places words in this order.</li>
-          <li data-lines="5"><b>Return what was left out.</b> The count of hidden words is printed under each cloud.</li>
-        </ol>
-        <p class="check">Checkpoint · kept 164 · 186 · 153 | left out 1,838 · 2,810 · 1,620</p>
-        <p class="note">Both tasks replace this function and nothing else.</p>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Filtering is a design decision, not a technical one. Task 1 and Task 2 are two other answers to the same question.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="5" data-focus="5-26">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 5 · layoutCloud (1/2)</p>
-        <h2>Measure each word, and keep a grid of what is placed.</h2>
-        <ol class="anno">
-          <li data-lines="3"><b>A hidden canvas.</b> <code>measureText</code> gives the real width of a word in its font before anything is drawn.</li>
-          <li data-lines="6-8"><b>One band per source.</b> Each cloud has a top, a bottom and a centre.</li>
-          <li data-lines="12-18"><b>A grid of 40-px cells.</b> Each placed word is filed in the cells it covers, so a new word is only checked against its neighbours. With 1,000 words (Task 1) this is the difference between a second and a frozen page.</li>
-          <li data-lines="21-25"><b>A box per word.</b> Size from the √ scale, then width and height. Overlap is tested on these rectangles.</li>
-          <li data-lines="26"><b>The target is the centre.</b> Every word starts there, which is why the biggest words end up in the middle. Task 2 changes this line.</li>
-        </ol>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Line 26 is where Task 2 happens. Point at it now and come back to it later.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="5" data-focus="28-44">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 5 · layoutCloud (2/2)</p>
-        <h2>Walk out along a spiral until the word fits.</h2>
-        <p>The classic Wordle layout, without the randomness.</p>
-        <ol class="anno">
-          <li data-lines="30-32"><b>An Archimedean <dfn data-g="spiral">spiral</dfn>.</b> The radius grows with the angle, stretched 1.6× sideways so the cloud is wider than tall, like a screen.</li>
-          <li data-lines="33"><b>Stay inside the band.</b> Points outside are skipped.</li>
-          <li data-lines="34-35"><b><dfn data-g="collision">Collision</dfn> test.</b> Two boxes overlap if their centres are closer than half their widths and half their heights; only words in nearby cells are checked.</li>
-          <li data-lines="37-42"><b>Placed or counted.</b> A word that never fits is counted; main() grows all bands by 20 px until none is left.</li>
-        </ol>
-        <p class="check">Checkpoint · unplaced 0 in every cloud</p>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Largest first is what puts the big words in the middle: they claim the centre before anything else exists. No random numbers, so every student gets the same picture.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="6" data-focus="2-14">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 6 · drawCloud (1/3)</p>
-        <h2>One group per source, and what it hides.</h2>
-        <ol class="anno">
-          <li data-lines="4"><b>Size the SVG.</b> As wide as the page, as tall as three bands.</li>
-          <li data-lines="6-10"><b>A small data join.</b> One &lt;g&gt; per source, created once with a rule line, a name and a note.</li>
-          <li data-lines="11-12"><b>Small multiples.</b> Three clouds stacked, each named, all with the same encoding.</li>
-          <li data-lines="13-14"><b>The honesty note.</b> How many words step 4 left out, printed under each cloud.</li>
-        </ol>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Task 1 rewrites line 14: the note will say what rank N is worth and how many words tie with it.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="6" data-focus="16-32">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 6 · drawCloud (2/3)</p>
-        <h2>The data join: one text element per term.</h2>
-        <ol class="anno">
-          <li data-lines="18"><b>A key per word.</b> <code>band|term</code> tells D3 which element is which, so on resize words move instead of being redrawn: a <dfn data-g="join">keyed data join</dfn>.</li>
-          <li data-lines="19-24"><b>enter, update, exit.</b> New words fade in; words that disappear fade out and are removed.</li>
-          <li data-lines="26-29"><b>Channels as attributes.</b> fill = tone, weight and opacity lower for grey words, italic for "not …" terms.</li>
-          <li data-lines="30-32"><b>A <dfn data-g="transition">transition</dfn>.</b> 600 ms when the data changes, 0 on a plain resize.</li>
-        </ol>
-        <p class="check">Checkpoint · [Step 6] 503 words drawn</p>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Grey words get opacity 0.45: the biggest words are neutral nouns, and full white would pull the eye to them first.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="6" data-focus="34-47">
-      <div class="code-text">
-        <p class="label">4 · The code · Step 6 · drawCloud (3/3)</p>
-        <h2>Details on demand: the counts and one real sentence.</h2>
-        <ol class="anno">
-          <li data-lines="37"><b>Pick the side it leans to.</b> A praise word shows a praise sentence.</li>
-          <li data-lines="38-41"><b>Build with .text(), not innerHTML.</b> Review text is data: it is never run as HTML.</li>
-          <li data-lines="42-44"><b>Keep it on screen.</b> The box shifts left near the right edge.</li>
-        </ol>
-        <p class="note">The tooltip reminds the reader of the main caveat: the label belongs to the sentence. A word is green because of the sentences it appears in.</p>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">Hover minutes again: the example sentence is about waiting 10 minutes for water. That is why minutes is pink.</aside>
-    </section>
-
-    <section class="slide code-slide" data-menu="4" data-section="MAIN" data-focus="2-41">
-      <div class="code-text">
-        <p class="label">4 · The code · main()</p>
-        <h2>Run the steps in order, and check each one.</h2>
-        <ol class="anno">
-          <li data-lines="5-15"><b>Data first.</b> Steps 1–4 run once and print their checkpoints.</li>
-          <li data-lines="17"><b>One size scale for all clouds.</b> Domain 7 to the largest count, range 10–40 px. Shared, so Dining and Film can be compared.</li>
-          <li data-lines="18-28"><b>Render.</b> Lay out all clouds; if any word is unplaced, grow every band by 20 px and try again.</li>
-          <li data-lines="31-35"><b>Fonts, then draw.</b> Wait for the web font so widths are measured right; redraw on resize, at most every 150 ms.</li>
-          <li data-lines="36-39"><b>Fail loudly.</b> The page explains a missing file instead of staying blank.</li>
-        </ol>
-      </div>
-      <div class="code-box"><pre class="code"></pre></div>
-      <aside class="notes">The checkpoints are the contract between the prompt and the code. If a number differs, fix that step before moving on.</aside>
-    </section>
-
-
-    <section class="slide" data-menu="4">
-      <p class="label">4 · The code · Code walkthrough</p>
-      <h2>Five key pieces of D3 code.</h2>
-      <table class="table">
-        <thead><tr><th>Piece</th><th>Where</th><th>What it does</th></tr></thead>
-        <tbody>
-          <tr><td><code>d3.scaleSqrt()</code></td><td>main()</td><td>Maps a sentence count (domain) to a font size in pixels (range)</td></tr>
-          <tr><td><code>d3.select(…).attr(…)</code></td><td>drawCloud</td><td>Selects the SVG, sets its size, and builds one group per source</td></tr>
-          <tr><td><code>.data(…, key).join(…)</code></td><td>drawCloud</td><td>Binds one term to one &lt;text&gt; element; enter, update and exit</td></tr>
-          <tr><td><code>.transition()</code></td><td>drawCloud</td><td>Animates words to their new place and size when the layout changes</td></tr>
-          <tr><td><code>.on('mousemove', …)</code></td><td>drawCloud</td><td>Fills and moves the tooltip with the hovered word's counts and sentence</td></tr>
-        </tbody>
-      </table>
-      <p class="note">For each piece, the next slides answer four questions: what the code does, why it is needed, what would happen if it were removed or changed, and which parts are D3-specific.</p>
-      <aside class="notes">This is the code walkthrough part of the assessment. Steps 1–5 are plain JavaScript; D3 starts at the scale and the drawing.</aside>
+      <p class="note">Steps 1–3 are plain JavaScript: the preprocessing we just saw. Next we read only the code that decides how the picture looks, one channel at a time.</p>
+      <aside class="notes">Five short pieces of code: size, colour, position, the data join, the tooltip. For each: what it does, which idea from the course it applies, what changes if you change it.</aside>
     </section>
 
     <section class="slide piece-slide" data-menu="4">
-      <p class="label">4 · The code · Key D3 piece 1 · d3.scaleSqrt</p>
-      <h2>The size scale: from a count to pixels.</h2>
+      <p class="label">4 · The code · Size</p>
+      <h2>Size: a count becomes a font size.</h2>
+      <p class="concept">Marks &amp; channels · <dfn data-g="magnitude">magnitude channel</dfn> · <dfn data-g="commonscale">common scale</dfn> · <code>d3.scaleSqrt · domain · range</code></p>
       <div class="piece">
         <div class="snippet-box"><pre class="code snippet">const size = d3.scaleSqrt()
-  .domain([CONFIG.minCount, d3.max(selected.flatMap(s =&gt; s.kept), t =&gt; t.count)])
-  .range(CONFIG.fontRange);</pre><p class="caption">From Wordcloud_clean/wordcloud.js · lines that do not matter here are left out (…)</p></div>
-        <div class="quad">
-          <div><h3>What it does</h3><p>Turns a term's sentence count into a font size: 7 sentences → 10 px, the largest count → 40 px.</p></div>
-          <div><h3>Why it is needed</h3><p>Without a scale there is no rule from data to size. A square-root scale keeps the word's area proportional to its count; one scale for all three clouds keeps them comparable.</p></div>
-          <div><h3>If removed or changed</h3><p>With <code>scaleLinear</code>, area grows with the square of the count and big words swamp the cloud. With a separate scale per cloud, "film" and "food" would look equal even if their counts differ.</p></div>
-          <div><h3>D3-specific</h3><p><code>d3.scaleSqrt</code>, <code>.domain()</code>, <code>.range()</code>, <code>d3.max</code>. The arrow functions and <code>flatMap</code> are plain JavaScript.</p></div>
+  .domain([CONFIG.minCount, d3.max(terms, t =&gt; t.count)])  // 7 … largest count
+  .range([10, 40]);                                       // px
+
+const fontSize = size(t.count);</pre></div>
+        <div class="quad three">
+          <div><h3>What it does</h3><p>Count → font size: 7 sentences = 10 px, the top word = 40 px.</p></div>
+          <div><h3>Why</h3><p>√ keeps a word's area proportional to its count; one scale for all clouds.</p></div>
+          <div><h3>If you change it</h3><p>Linear: a few big words swamp the cloud.</p></div>
         </div>
       </div>
+      <aside class="notes">Ask the room: why square root and not linear? Because we judge a word by its area.</aside>
     </section>
 
     <section class="slide piece-slide" data-menu="4">
-      <p class="label">4 · The code · Key D3 piece 2 · d3.select and .attr</p>
-      <h2>Selections: one group per source.</h2>
+      <p class="label">4 · The code · Colour</p>
+      <h2>Colour: the tone of a word, from its share of praise.</h2>
+      <p class="concept">Color · <dfn data-g="diverging">diverging palette</dfn> with a neutral midpoint · <dfn data-g="derived">derived attribute</dfn> · <code>.attr('fill', d => …)</code></p>
       <div class="piece">
-        <div class="snippet-box"><pre class="code snippet">const svg = d3.select('#cloud').attr('width', width).attr('height', height);
+        <div class="snippet-box"><pre class="code snippet">const share = (praise + 5) / (count + 10);          // smoothed, 0 … 1
+const tone = share &gt;= 0.70 ? &#x27;praise&#x27;
+           : share &lt;= 0.30 ? &#x27;complaint&#x27; : &#x27;neutral&#x27;;
 
-const g = svg.selectAll('g.band').data(bands).join(enter =&gt; {
-  const b = enter.append('g').attr('class', 'band');
-  b.append('line'); b.append('text').attr('class', 'band-name'); …
-  return b;
-});
-g.select('.band-name').attr('y', (d, i) =&gt; i * bandHeight + 22).text(d =&gt; d.source);</pre><p class="caption">From Wordcloud_clean/wordcloud.js · lines that do not matter here are left out (…)</p></div>
-        <div class="quad">
-          <div><h3>What it does</h3><p>Selects the SVG and sets its size, then creates one &lt;g&gt; per source and writes its name at the top of its band.</p></div>
-          <div><h3>Why it is needed</h3><p>Each cloud needs its own frame: a rule, a name and the note of what was left out. Doing it with a join keeps it in step with the data.</p></div>
-          <div><h3>If removed or changed</h3><p>Without the width and height the SVG is 300 × 150 px and the clouds are cut off. With a fixed y instead of <code>i * bandHeight</code>, all names land on top of each other.</p></div>
-          <div><h3>D3-specific</h3><p><code>d3.select</code>, <code>.attr</code> with a value or a function <code>(d, i) =&gt; …</code>, <code>.selectAll().data().join(enter =&gt; …)</code>, <code>.append</code>, <code>.text</code>.</p></div>
+text.attr(&#x27;fill&#x27;, d =&gt; CONFIG.colors[d.tone])        // green · pink · grey
+    .attr(&#x27;opacity&#x27;, d =&gt; d.tone === &#x27;neutral&#x27; ? 0.45 : 1);</pre></div>
+        <div class="quad three">
+          <div><h3>What it does</h3><p>Share of praise → three tones: green, grey, pink.</p></div>
+          <div><h3>Why</h3><p>A diverging palette: 50% is a real midpoint, so neutral grey sits there.</p></div>
+          <div><h3>If you change it</h3><p>More shades: small words cannot show them. No smoothing: rare words turn bright.</p></div>
         </div>
       </div>
+      <aside class="notes">This is the only place sentiment enters the picture in the base cloud.</aside>
     </section>
 
     <section class="slide piece-slide" data-menu="4">
-      <p class="label">4 · The code · Key D3 piece 3 · .data(…, key).join(…)</p>
-      <h2>The data join: one element per term.</h2>
+      <p class="label">4 · The code · Position</p>
+      <h2>Position: every word starts at the centre and spirals out.</h2>
+      <p class="concept">Arrange · the most <dfn data-g="effectiveness">effective</dfn> channel · <dfn data-g="spiral">spiral layout</dfn> · <code>plain JS + canvas measureText</code></p>
       <div class="piece">
-        <div class="snippet-box"><pre class="code snippet">svg.selectAll('text.word')
-  .data(bands.flatMap(b =&gt; b.placed), d =&gt; `${d.band}|${d.term}`)
-  .join(
-    enter =&gt; enter.append('text').attr('class', 'word').attr('opacity', 0),
-    update =&gt; update,
-    exit =&gt; exit.transition(t).attr('opacity', 0).remove()
-  )</pre><p class="caption">From Wordcloud_clean/wordcloud.js · lines that do not matter here are left out (…)</p></div>
-        <div class="quad">
-          <div><h3>What it does</h3><p>Binds the placed terms to &lt;text&gt; elements. New terms get a new element, existing ones are updated, missing ones fade out.</p></div>
-          <div><h3>Why it is needed</h3><p>This is the "data-driven" in Data-Driven Documents: the document follows the data, so a resize or a new selection (Tasks 1 and 2) updates the same elements.</p></div>
-          <div><h3>If removed or changed</h3><p>Without the key, D3 matches by index: after a resize "good" could become "great" mid-animation. Without <code>exit</code>, removed words stay on screen.</p></div>
-          <div><h3>D3-specific</h3><p><code>.selectAll().data(data, key)</code>, <code>.join(enter, update, exit)</code>, <code>.append</code>, <code>.remove</code>.</p></div>
+        <div class="snippet-box"><pre class="code snippet">const target = centre.x;                    // Task 2 changes this line
+for (let k = 0; !spot; k++) {
+  const angle = k * 0.12;
+  const x = target   + 1.2 * angle * Math.cos(angle) * 1.6;
+  const y = centre.y + 1.2 * angle * Math.sin(angle);
+  if (!overlaps(x, y, w, h)) spot = { x, y };   // first free place wins
+}</pre></div>
+        <div class="quad three">
+          <div><h3>What it does</h3><p>Biggest word first at the centre; the rest spiral out until they fit.</p></div>
+          <div><h3>Why</h3><p>Most frequent words end up in the middle; no randomness, same picture for everyone.</p></div>
+          <div><h3>If you change it</h3><p>Change target and position starts to carry data: Task 2.</p></div>
         </div>
       </div>
+      <aside class="notes">Point at the first line. Students will come back to it in Task 2.</aside>
     </section>
 
     <section class="slide piece-slide" data-menu="4">
-      <p class="label">4 · The code · Key D3 piece 4 · .transition()</p>
-      <h2>Animated transitions: words move, they do not jump.</h2>
+      <p class="label">4 · The code · Data join</p>
+      <h2>The data join: one &lt;text&gt; per term.</h2>
+      <p class="concept">D3: <code>select · data · join · attr</code> · <dfn data-g="transition">animated transition</dfn> · <code>selectAll · data(…, key) · join · transition</code></p>
       <div class="piece">
-        <div class="snippet-box"><pre class="code snippet">const t = d3.transition().duration(animate ? 600 : 0);
-…
-  .transition(t)
-  .attr('x', d =&gt; d.x).attr('y', d =&gt; d.y).attr('font-size', d =&gt; d.fontSize)
-  .attr('opacity', d =&gt; d.tone === 'neutral' ? 0.45 : 1);</pre><p class="caption">From Wordcloud_clean/wordcloud.js · lines that do not matter here are left out (…)</p></div>
-        <div class="quad">
-          <div><h3>What it does</h3><p>Interpolates each word from its old position, size and opacity to the new ones over 600 ms.</p></div>
-          <div><h3>Why it is needed</h3><p>A smooth transition supports item tracking: when Task 2's slider changes N, the reader can follow which words stay.</p></div>
-          <div><h3>If removed or changed</h3><p>With duration 0 everywhere, the cloud jumps and the reader loses the words. With 600 ms on every resize, dragging the window feels slow, so a plain resize uses 0.</p></div>
-          <div><h3>D3-specific</h3><p><code>d3.transition</code>, <code>.duration</code>, <code>.transition(t)</code> on a selection; D3 interpolates numbers and colours.</p></div>
+        <div class="snippet-box"><pre class="code snippet">svg.selectAll(&#x27;text.word&#x27;)
+  .data(placed, d =&gt; d.term)                 // key: one element per term
+  .join(&#x27;text&#x27;)
+  .text(d =&gt; d.term)
+  .transition().duration(600)
+  .attr(&#x27;x&#x27;, d =&gt; d.x).attr(&#x27;y&#x27;, d =&gt; d.y)
+  .attr(&#x27;font-size&#x27;, d =&gt; d.fontSize);</pre></div>
+        <div class="quad three">
+          <div><h3>What it does</h3><p>One &lt;text&gt; per term, positioned and sized from the data.</p></div>
+          <div><h3>Why</h3><p>The page follows the data: Tasks 1 and 2 update the same elements.</p></div>
+          <div><h3>If you change it</h3><p>No key: words swap mid-animation. No transition: the cloud jumps.</p></div>
         </div>
       </div>
+      <aside class="notes">This is the core D3 idea from week 4: select, bind data, set attributes.</aside>
     </section>
 
     <section class="slide piece-slide" data-menu="4">
-      <p class="label">4 · The code · Key D3 piece 5 · .on('mousemove', …)</p>
+      <p class="label">4 · The code · Tooltip</p>
       <h2>The tooltip: details on demand.</h2>
+      <p class="concept">Interaction · <dfn data-g="detailsondemand">details on demand</dfn> · <code>.on('mousemove', (event, d) => …)</code></p>
       <div class="piece">
-        <div class="snippet-box"><pre class="code snippet">svg.selectAll('text.word')
-  .on('mousemove', (event, d) =&gt; {
-    const side = d.share &gt;= 0.5 ? 'praise' : 'complaint';
-    tip.property('hidden', false).html('')
-      .call(el =&gt; el.append('strong').text(d.term))
-      .call(el =&gt; el.append('p').text(`“${d.example[side]}”`));
-  })
-  .on('mouseleave', () =&gt; tip.property('hidden', true));</pre><p class="caption">From Wordcloud_clean/wordcloud.js · lines that do not matter here are left out (…)</p></div>
-        <div class="quad">
-          <div><h3>What it does</h3><p>On hover, shows the term, its praise and complaint counts, its share and one real sentence; hides on leave.</p></div>
-          <div><h3>Why it is needed</h3><p>The overview cannot show exact counts or the sentences. The tooltip gives that detail on demand, and reminds the reader that labels belong to sentences.</p></div>
-          <div><h3>If removed or changed</h3><p>Without it, the reader cannot check why a word is green. The tooltip does not replace the overview: everything important is encoded directly.</p></div>
-          <div><h3>D3-specific</h3><p><code>.on(event, handler)</code> with the bound datum <code>d</code>, <code>.property</code>, <code>.call</code>, <code>.append</code>, <code>.text</code>. <code>event.clientX</code> is plain DOM.</p></div>
+        <div class="snippet-box"><pre class="code snippet">text.on(&#x27;mousemove&#x27;, (event, d) =&gt; {
+  tip.html(&#x27;&#x27;)
+     .call(el =&gt; el.append(&#x27;strong&#x27;).text(d.term))
+     .call(el =&gt; el.append(&#x27;span&#x27;).text(`${d.praise} praise / ${d.complaint} complaints`))
+     .call(el =&gt; el.append(&#x27;p&#x27;).text(d.example.praise ?? d.example.complaint));
+});</pre></div>
+        <div class="quad three">
+          <div><h3>What it does</h3><p>On hover: exact counts and one real sentence.</p></div>
+          <div><h3>Why</h3><p>Details on demand: the label belongs to the sentence, not the word.</p></div>
+          <div><h3>If you change it</h3><p>Without it, no one can check why a word is green.</p></div>
         </div>
       </div>
+      <aside class="notes">Hover minutes: 0 praise, 16 complaints, and the sentence about waiting for water.</aside>
     </section>
 
     <!-- ===================== 5 · TASK 1 ===================== -->

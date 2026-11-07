@@ -226,41 +226,6 @@ function markLines(pre, spec, cls, scroll) {
   }
 }
 
-Promise.all(Object.entries(CODE_FILES).map(([k, path]) =>
-  fetch(path).then(r => { if (!r.ok) throw new Error(path); return r.text(); }).then(text => [k, text])))
-  .catch(error => {                                   // opened from a folder: use the copy in code-snapshot.js
-    if (window.CODE_SNAPSHOT) return Object.entries(window.CODE_SNAPSHOT);
-    throw error;
-  })
-  .then(entries => {
-    const files = Object.fromEntries(entries);
-    document.querySelectorAll('.code-slide').forEach(slide => {
-      const pre = slide.querySelector('pre.code');
-      let code;
-      if (slide.dataset.file === 'html') {
-        const [a, b] = range(slide.dataset.lines);
-        code = files.html.split('\n').slice(a - 1, b).join('\n');
-      } else {
-        code = cutSection(files.js, slide.dataset.section);
-      }
-      pre.innerHTML = highlight(code, slide.dataset.file === 'html');
-      pre.classList.add('has-focus');
-      markLines(pre, slide.dataset.focus, 'focus');
-      slide.querySelectorAll('.anno li').forEach(li => {
-        li.addEventListener('mouseenter', () => { markLines(pre, li.dataset.lines, 'hl', 'smooth'); li.classList.add('on'); });
-        li.addEventListener('mouseleave', () => { markLines(pre, null, 'hl'); li.classList.remove('on'); });
-        li.addEventListener('click', () => markLines(pre, li.dataset.lines, 'hl', 'smooth'));
-      });
-      slide._scrollToFocus = () => markLines(pre, slide.dataset.focus, 'focus', 'auto');
-      if (slide.classList.contains('active')) slide._scrollToFocus();
-    });
-  })
-  .catch(error => {
-    document.querySelectorAll('.code-slide pre.code').forEach(pre => {
-      pre.textContent = `Could not read ${error.message}. Open the parent folder with Live Server so this page and Wordcloud_clean share one server.`;
-    });
-  });
-
 document.querySelectorAll('pre.snippet').forEach(pre => { pre.innerHTML = highlight(pre.textContent); });
 
 // ---------------- Glossary: dotted terms, tooltip, and the glossary slide ----------------
