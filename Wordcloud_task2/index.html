@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Praise and complaints, in different words</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="wordcloud.js" defer></script>
+</head>
+<body>
+  <header class="intro">
+    <h1>People praise and complain about the same things, in different words</h1>
+    <p class="subtitle">3,000 review sentences · Yelp, IMDb, Amazon · 500 praise / 500 complaints each</p>
+    <p class="status" id="status">Reading 3,000 sentences…</p>
+  </header>
+
+  <main class="stage" id="stage">
+    <svg id="cloud" role="img" aria-label="One word cloud of review words placed between three corners for Dining, Tech and Film, coloured by praise or complaint"></svg>
+  </main>
+
+  <div class="tooltip" id="tooltip" hidden></div>
+
+  <footer class="how">
+    <h2>How to read</h2>
+    <p><strong>One cloud for all three sources.</strong> Dining, Tech and Film are the corners of an upside-down triangle. Each word starts at the average of the corners, weighted by how many sentences of each source contain it, then spirals outwards until it finds space. Words every source uses sit in the middle; words one source uses alone sit in its corner. <strong>Colour</strong> still shows praise or complaint, over all 3,000 sentences.</p>
+    <p><strong>Size</strong> is the number of sentences that contain the word, on one square-root scale. <strong>Colour</strong>: green at 70% or more, pink at 30% or less (in this data that roughly matches statistical significance), grey between. <em>Italic</em> terms are "not …" phrases counted as one term.</p>
+    <p><strong>Shown</strong>: every term found in at least 7 sentences of one source. Grammar words (the, of, is, they …) are removed. Hover a word for its counts per source and one real sentence.</p>
+    <p class="source">Data: Sentiment Labelled Sentences, Kotzias et al., KDD 2015 (UCI Machine Learning Repository).</p>
+  </footer>
+</body>
+</html>
