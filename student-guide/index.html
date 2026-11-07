@@ -18,11 +18,11 @@
     </div>
     <p class="toc-title">Word cloud workshop</p>
     <ol>
-      <li><a href="#start"><span lang="en">Start here</span><span lang="zh">从这里开始</span></a></li>
-      <li><a href="#method"><span lang="en">1 · What a word cloud encodes</span><span lang="zh">1 · 词云编码了什么</span></a></li>
-      <li><a href="#data"><span lang="en">2 · Know the data</span><span lang="zh">2 · 了解数据</span></a></li>
-      <li><a href="#concepts"><span lang="en">3 · Concepts</span><span lang="zh">3 · 概念</span></a></li>
-      <li><a href="#build"><span lang="en">4 · Build in 6 steps</span><span lang="zh">4 · 六步搭建</span></a>
+      <li><a href="#start"><span lang="en">0 · Start</span><span lang="zh">0 · 开始</span></a></li>
+      <li><a href="#method"><span lang="en">1 · The method</span><span lang="zh">1 · 方法</span></a></li>
+      <li><a href="#data"><span lang="en">2 · The data</span><span lang="zh">2 · 数据</span></a></li>
+      <li><a href="#design"><span lang="en">3 · Our design</span><span lang="zh">3 · 设计</span></a></li>
+      <li><a href="#build"><span lang="en">4 · The code</span><span lang="zh">4 · 代码</span></a>
         <ol class="steps-toc">
           <li><label><input type="checkbox" data-progress="s1"> 1 loadData</label></li>
           <li><label><input type="checkbox" data-progress="s2"> 2 toTerms</label></li>
@@ -34,7 +34,7 @@
       </li>
       <li><a href="#task1"><input type="checkbox" data-progress="t1" aria-label="Task 1 done"> <span lang="en">5 · Task 1</span><span lang="zh">5 · 任务 1</span></a></li>
       <li><a href="#task2"><input type="checkbox" data-progress="t2" aria-label="Task 2 done"> <span lang="en">6 · Task 2</span><span lang="zh">6 · 任务 2</span></a></li>
-      <li><a href="#submit"><span lang="en">7 · Check &amp; submit</span><span lang="zh">7 · 检查与提交</span></a></li>
+      <li><a href="#submit"><span lang="en">7 · Wrap-up</span><span lang="zh">7 · 总结</span></a></li>
     </ol>
   </aside>
 
@@ -58,7 +58,7 @@
 
     <!-- ===================== 1 METHOD ===================== -->
     <section id="method">
-      <h2><span>1</span><b lang="en">What a word cloud encodes</b><b lang="zh">词云编码了什么</b></h2>
+      <h2><span>1</span><b lang="en">The method</b><b lang="zh">方法</b></h2>
       <div lang="en">
         <p>In a word cloud the <b>mark</b> is the word itself, and the main <b>channel</b> is size: <b>bigger means more often</b>. You see the whole text at a glance, and large or bright words pop out before you search for them.</p>
         <p>It also has three blind spots:</p>
@@ -83,7 +83,7 @@
 
     <!-- ===================== 2 DATA ===================== -->
     <section id="data">
-      <h2><span>2</span><b lang="en">Know the data</b><b lang="zh">了解数据</b></h2>
+      <h2><span>2</span><b lang="en">The data</b><b lang="zh">数据</b></h2>
       <p lang="en">Each file is a flat table: one sentence per line, a tab, then the label.</p>
       <p lang="zh">每个文件都是一张扁平表：每行一句话，一个制表符（tab），然后是标签。</p>
       <pre class="raw"><span class="file">yelp_labelled.txt</span>
@@ -103,13 +103,7 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
       <details><summary><span lang="en">Why does 50% mean "used equally in both"?</span><span lang="zh">为什么 50% 表示"两边用得一样多"？</span></summary><p lang="en">Every source is exactly 500 praise and 500 complaint sentences, so the midpoint is a true neutral point.</p><p lang="zh">每个来源恰好 500 句称赞、500 句抱怨，所以中点就是真正的中性点。</p></details>
       <details><summary><span lang="en">Can one sentence tell you whether a word is positive?</span><span lang="zh">一句话能说明一个词是正面的吗？</span></summary><p lang="en">No. The label belongs to the whole sentence. You need many sentences, counted together.</p><p lang="zh">不能。标签属于整句话，需要把许多句子合起来统计。</p></details>
       <details><summary><span lang="en">How many distinct words appear only once?</span><span lang="zh">有多少不同的词只出现一次？</span></summary><p lang="en">About 58% of 5,069. This long tail is why every word cloud must leave words out.</p><p lang="zh">5,069 个词中约 58%。这条长尾（long tail）就是每个词云都必须舍弃一些词的原因。</p></details>
-    </section>
-
-    <!-- ===================== 3 CONCEPTS ===================== -->
-    <section id="concepts">
-      <h2><span>3</span><b lang="en">Concepts</b><b lang="zh">概念</b></h2>
-
-      <h3 lang="en">From a sentence to terms</h3><h3 lang="zh">从句子到词项</h3>
+          <h3 lang="en">Preprocessing: from a sentence to terms</h3><h3 lang="zh">预处理：从句子到词项</h3>
       <div class="pipeline-example">
         <div><span>Sentence</span>The food isn't very good.</div>
         <div><span>Tokens</span>the · food · is · not · very · good</div>
@@ -148,6 +142,11 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
         </div>
       </div>
 
+    </section>
+
+    <!-- ===================== 3 DESIGN ===================== -->
+    <section id="design">
+      <h2><span>3</span><b lang="en">Our design</b><b lang="zh">设计</b></h2>
       <h3 lang="en">Three tones: a diverging palette</h3><h3 lang="zh">三种语气：发散型配色</h3>
       <table class="tones">
         <tr><td><i class="sw praise"></i></td><td>≥ 70%</td><td><span lang="en">praise</span><span lang="zh">称赞</span></td></tr>
@@ -173,11 +172,11 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
         <figcaption lang="en">A spiral from the target point (dot). In the base every word starts at the centre; in Task 2 the start moves towards the sources that use the word.</figcaption>
         <figcaption lang="zh">从目标点（圆点）出发的螺旋。基础版中每个词都从中心出发；任务 2 中起点移向使用这个词的来源。</figcaption>
       </figure>
-    </section>
+        </section>
 
     <!-- ===================== 4 BUILD ===================== -->
     <section id="build">
-      <h2><span>4</span><b lang="en">Build in 6 steps</b><b lang="zh">六步搭建</b></h2>
+      <h2><span>4</span><b lang="en">The code: build in 6 steps</b><b lang="zh">代码：六步搭建</b></h2>
       <p lang="en">Each step is one function in <code>wordcloud.js</code>. Write your own request to Copilot from the points under <b>Tell Copilot</b>, reload the page, and compare the console with the <b>checkpoint</b> before you go on. Put every number you choose in one <code>CONFIG</code> object at the top of the file.</p>
       <p lang="zh">每一步是 <code>wordcloud.js</code> 里的一个函数。根据 <b>告诉 Copilot</b> 下面的要点，自己写给 Copilot 的请求，刷新页面，并在继续之前把控制台输出和<b>检查点</b>对比。把你选定的所有数字放进文件顶部的一个 <code>CONFIG</code> 对象。</p>
 
@@ -258,7 +257,7 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
 
     <!-- ===================== TASK 1 ===================== -->
     <section id="task1">
-      <h2><span>5</span><b lang="en">Task 1 · How many words? Top 10, 50, 100, 1000</b><b lang="zh">任务 1 · 显示多少个词？前 10、50、100、1000</b></h2>
+      <h2><span>5</span><b lang="en">Task 1 · Top 10, 50, 100, 1000: how many words?</b><b lang="zh">任务 1 · 显示多少个词？前 10、50、100、1000</b></h2>
       <div class="brief">
         <div><h4 lang="en">Objective</h4><h4 lang="zh">目标</h4>
           <p lang="en">Replace the rule "7 sentences or more" with the most common filter: sort by count and keep the top N. See what each N shows, and what the cut does to tied words.</p>
@@ -320,7 +319,7 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
 
     <!-- ===================== SUBMIT ===================== -->
     <section id="submit">
-      <h2><span>7</span><b lang="en">Check &amp; submit</b><b lang="zh">检查与提交</b></h2>
+      <h2><span>7</span><b lang="en">Wrap-up: check &amp; submit</b><b lang="zh">总结：检查与提交</b></h2>
       <ul class="checklist" lang="en">
         <li><label><input type="checkbox" data-progress="c1"> Every checkpoint matches your console</label></li>
         <li><label><input type="checkbox" data-progress="c2"> Your inclusion rule and your colour sentence are written on the page</label></li>
