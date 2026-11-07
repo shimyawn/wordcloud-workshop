@@ -33,12 +33,12 @@
     <!-- ===================== 0 · COVER ===================== -->
     <section class="slide cover" data-menu="0">
       <div class="cover-text">
-        <p class="label">D3.js · Sentiment Labelled Sentences (Kotzias et al., KDD 2015)</p>
+        <p class="label">D3.js word cloud workshop</p>
         <h1>Build a word cloud that shows which words people use to praise and which to complain</h1>
-        <p class="lede">3,000 review sentences become one word cloud per source. Size shows how often a word appears; colour shows whether it is used to praise or to complain. Six steps with Copilot, a checkpoint after each, then two changes by hand.</p>
+        <p class="lede">3,000 review sentences (Yelp, IMDb, Amazon), one cloud per source. Size = how often; colour = praise or complaint.</p>
         <p class="hint">← → move · 0–7 jump · N notes · T timer · F full screen · G glossary</p>
       </div>
-      <div class="frame scaled"><iframe data-src="../Wordcloud_clean/index.html" title="Our word cloud"></iframe></div>
+      <div class="frame"><iframe data-src="../Wordcloud_clean/index.html" title="Our word cloud"></iframe></div>
       <aside class="notes">Open on our cloud: one cloud per source, the biggest words in the middle, green for praise and pink for complaints. Today: why it looks like this, its code, then two changes: how many words it shows (Task 1) and what position means (Task 2).</aside>
     </section>
 
@@ -169,19 +169,82 @@ The food, amazing.<span class="tab">⇥</span>1</pre>
     <section class="slide" data-menu="4">
       <p class="label">4 · The code</p>
       <h2>The code: build in 6 steps.</h2>
-      <table class="table compact steps-table">
-        <thead><tr><th>Step</th><th>Function</th><th>Look for</th><th>Checkpoint</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td><code>loadData</code> · read 3,000 sentences</td><td>fetch · lastIndexOf</td><td class="praise">3,000 sentences</td></tr>
-          <tr><td>2</td><td><code>toTerms</code> · preprocessing</td><td>toLowerCase · new Set · NEGATORS</td><td class="praise">"The food isn't very good." → food, not good</td></tr>
-          <tr><td>3</td><td><code>countTerms</code> · count, share, tone</td><td>new Map · CONFIG.prior</td><td class="praise">good 69/9 84% · great 64/0 93% · food 59/61 49%</td></tr>
-          <tr><td>4</td><td><code>selectTerms</code> · 7 sentences or more</td><td>filter · sort</td><td class="praise">Dining 164 · Film 186 · Tech 153</td></tr>
-          <tr><td>5</td><td><code>layoutCloud</code> · spiral from the centre</td><td>scaleSqrt · measureText · target</td><td class="praise">food, movie, phone in the middle · 0 unplaced</td></tr>
-          <tr><td>6</td><td><code>drawCloud</code> · data join, tooltip</td><td>selectAll · .data( · .join( · .on(</td><td class="praise">503 words · minutes: 0 praise / 16 complaints</td></tr>
-        </tbody>
-      </table>
-      <p class="note">Steps 1–3 are the preprocessing from part 2, in plain JavaScript. Next: the five pieces of code that decide how the picture looks. Task 1 changes step 4; Task 2 changes steps 4–6.</p>
-      <aside class="notes">Same table as section 4 of the student guide. One prompt per function, one number to check per prompt.</aside>
+      <p class="lede wide">Each step is one function in <code>wordcloud.js</code>. Write your own request to Copilot from the points under <b>Tell Copilot</b>, reload the page, and compare the console with the <b>checkpoint</b> before you go on. Put every number you choose in one <code>CONFIG</code> object at the top of the file.</p>
+      <div class="pipeline">
+        <div class="step"><b>1 loadData</b><span>read 3,000 sentences</span></div>
+        <div class="step"><b>2 toTerms</b><span>preprocessing</span></div>
+        <div class="step"><b>3 countTerms</b><span>count, share, tone</span></div>
+        <div class="step key"><b>4 selectTerms</b><span>7 sentences or more</span></div>
+        <div class="step"><b>5 layoutCloud</b><span>spiral from the centre</span></div>
+        <div class="step"><b>6 drawCloud</b><span>data join, tooltip</span></div>
+        <div class="step task"><b>Task 1</b><span>changes step 4</span></div>
+        <div class="step task"><b>Task 2</b><span>changes steps 4–6</span></div>
+      </div>
+      <aside class="notes">Steps 1–3 are the preprocessing from part 2. After the six step cards, the five pieces of code that decide how the picture looks.</aside>
+    </section>
+
+    <section class="slide stepcards-slide" data-menu="4">
+      <p class="label">4 · The code · Build in 6 steps</p>
+      <h2>Steps 1–3: from files to scored terms.</h2>
+      <div class="stepcards">
+        <article class="stepcard">
+          <h3>1 · loadData</h3>
+          <p class="sig">loadData() → [{ text, label, source }]</p>
+          <p class="tell">Tell Copilot</p>
+          <ul><li>the three file paths and a source name for each</li><li>where the label is on each line</li><li>what to log when done</li></ul>
+          <p class="look"><span>Look for</span> fetch · lastIndexOf · Number(</p>
+          <p class="cp">Checkpoint · 3,000 sentences</p>
+          <p class="mistake">Common mistake · opening the page from file://, or a folder named Data</p>
+        </article><article class="stepcard">
+          <h3>2 · toTerms</h3>
+          <p class="sig">toTerms(text) → Set of terms</p>
+          <p class="tell">Tell Copilot</p>
+          <ul><li>the order of the contraction rules (can't, won't first)</li><li>which negators join, which words are skipped, and how far it may look ahead</li><li>that a joined word must not count again on its own</li><li>your stop-word list, written out in CONFIG</li></ul>
+          <p class="look"><span>Look for</span> toLowerCase · replace · new Set · NEGATORS</p>
+          <p class="cp">Checkpoint · "The food isn't very good." → food, not good</p>
+          <p class="mistake">Common mistake · "very" or "good" still counted after joining "not very good"</p>
+        </article><article class="stepcard">
+          <h3>3 · countTerms</h3>
+          <p class="sig">countTerms(sentences) → per source: [{ term, praise, complaint, count, share, tone, example }]</p>
+          <p class="tell">Tell Copilot</p>
+          <ul><li>count once per sentence, separately per source</li><li>the smoothed share and the two colour cut-offs</li><li>keep one example sentence per side for the tooltip</li></ul>
+          <p class="look"><span>Look for</span> new Map · praise += · CONFIG.prior</p>
+          <p class="cp">Checkpoint · Dining: good 69/9 84% · great 64/0 93% · food 59/61 49%</p>
+        </article>
+      </div>
+      <aside class="notes">Same cards as section 4 of the student guide. One request per step; reload; compare the console with the checkpoint before going on.</aside>
+    </section>
+
+    <section class="slide stepcards-slide" data-menu="4">
+      <p class="label">4 · The code · Build in 6 steps</p>
+      <h2>Steps 4–6: from terms to a picture.</h2>
+      <div class="stepcards">
+        <article class="stepcard">
+          <h3>4 · selectTerms</h3>
+          <p class="sig">selectTerms(terms) → { kept, leftOut }</p>
+          <p class="tell">Tell Copilot</p>
+          <ul><li>a rule, not a number of words: the fewest sentences a term needs to be able to lean</li><li>a fixed sort order, so ties never change places</li><li>return how many terms were left out</li></ul>
+          <p class="look"><span>Look for</span> filter · sort · localeCompare</p>
+          <p class="cp">Checkpoint · kept Dining 164 · Film 186 · Tech 153</p>
+          <p class="hintline">Both tasks replace this step. Write your rule on the page.</p>
+        </article><article class="stepcard">
+          <h3>5 · layoutCloud</h3>
+          <p class="sig">layoutCloud(terms, …) → [{ x, y, fontSize, … }], unplaced</p>
+          <p class="tell">Tell Copilot</p>
+          <ul><li>one square-root size scale for all clouds, with your font range</li><li>measure each word's width before placing it</li><li>largest first, an Archimedean spiral from the centre, a box overlap test (a grid keeps it fast)</li><li>grow the bands if any word is left unplaced</li></ul>
+          <p class="look"><span>Look for</span> scaleSqrt · measureText · Math.cos · target</p>
+          <p class="cp">Checkpoint · the biggest words (food, movie, phone) sit in the middle · 0 unplaced</p>
+        </article><article class="stepcard">
+          <h3>6 · drawCloud</h3>
+          <p class="sig">drawCloud(layout) → one SVG, three clouds</p>
+          <p class="tell">Tell Copilot</p>
+          <ul><li>a keyed data join: one &lt;text&gt; per term, key = source + term</li><li>colour by tone, italic for "not …" terms, grey words dimmer</li><li>under each cloud, how many words were left out</li><li>a tooltip with the counts and one real sentence</li></ul>
+          <p class="look"><span>Look for</span> selectAll · .data( · .join( · .transition( · .on('mousemove'</p>
+          <p class="cp">Checkpoint · 503 words drawn · hover "minutes": 0 praise / 16 complaints</p>
+          <p class="hintline">Write one sentence on your page that explains your colours.</p>
+        </article>
+      </div>
+      <aside class="notes">Same cards as section 4 of the student guide. One request per step; reload; compare the console with the checkpoint before going on.</aside>
     </section>
 
     <section class="slide piece-slide" data-menu="4">

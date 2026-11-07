@@ -237,10 +237,14 @@ async function main() {
     const scored = countTerms(await loadData());
     const { kept, leftOut } = mergeSources(scored);
     console.log(`[Task 2] ${kept.length} terms in one cloud, ${leftOut} left out`);
-    const size = d3.scaleSqrt().domain([CONFIG.minCount, d3.max(kept, t => t.count)]).range(CONFIG.fontRange);
     const render = animate => {
       const width = Math.max(720, document.getElementById('stage').clientWidth);
-      let height = CONFIG.cloudHeight, layout;
+      const stage = document.getElementById('stage');                 // fit the cloud in one screen
+      const visible = innerHeight - Math.min(stage.offsetTop, innerHeight * 0.3) - 16;
+      const fitted = Math.max(480, Math.min(CONFIG.cloudHeight, visible));
+      const size = d3.scaleSqrt().domain([CONFIG.minCount, d3.max(kept, t => t.count)])
+        .range([CONFIG.fontRange[0], Math.round(CONFIG.fontRange[1] * Math.min(1, fitted / CONFIG.cloudHeight * 1.1))]);
+      let height = fitted, layout;
       for (let attempt = 0; attempt < 15; attempt++) {
         layout = layoutCloud(kept, size, width, height);
         if (layout.unplaced === 0) break;

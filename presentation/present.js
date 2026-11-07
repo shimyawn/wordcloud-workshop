@@ -105,6 +105,7 @@ document.addEventListener('keydown', event => {
 const EMBED_CSS = `
   .intro h1, .intro .subtitle, .intro .kicker, .intro .eyebrow, footer.how, .how-to-read { display: none !important; }
   .intro { padding: 12px 0 0 !important; }
+  .intro, .axis, .stage { width: calc(100% - 32px) !important; }   /* use the whole frame, not the page's reading width */
   html { zoom: 0.82; }
 `;
 

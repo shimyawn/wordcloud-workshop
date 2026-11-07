@@ -223,10 +223,17 @@ async function main() {
     console.log('[Step 4] kept', selected.map(s => `${s.source} ${s.kept.length}`).join(' · '),
       '| left out', selected.map(s => s.leftOut).join(' / '));
 
-    const size = d3.scaleSqrt().domain([CONFIG.minCount, d3.max(selected.flatMap(s => s.kept), t => t.count)]).range(CONFIG.fontRange);
+    const maxCount = d3.max(selected.flatMap(s => s.kept), t => t.count);
     const render = animate => {
-      const width = Math.max(720, document.getElementById('stage').clientWidth);
-      let bandHeight = CONFIG.bandHeight, bands;
+      const width = Math.max(600, document.getElementById('stage').clientWidth);
+      // Fit all three clouds in one screen: each band gets a third of the visible height, fonts scale with it.
+      const stage = document.getElementById('stage');
+      const visible = innerHeight - Math.min(stage.offsetTop, innerHeight * 0.3) - 16;
+      const fitted = Math.max(150, Math.min(CONFIG.bandHeight, Math.floor(visible / 3)));
+      const size = d3.scaleSqrt().domain([CONFIG.minCount, maxCount])
+        .range([CONFIG.fontRange[0], Math.round(CONFIG.fontRange[1] * Math.min(fitted / CONFIG.bandHeight, width / 1100))]);
+      CONFIG.spiral.squash = Math.max(1.6, Math.min(4, width / fitted / 2.2));   // wide, short bands → a wider spiral
+      let bandHeight = fitted, bands;
       for (let attempt = 0; attempt < 15; attempt++) {     // grow all bands together until every word fits
         bands = selected.map((s, i) => ({ source: s.source, leftOut: s.leftOut, ...layoutCloud(s.kept, i, size, width, bandHeight) }));
         if (bands.every(b => b.unplaced === 0)) break;

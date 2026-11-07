@@ -336,3 +336,24 @@ pre.code.snippet { flex: 0 0 auto; padding: 18px 0; overflow: auto; }
   .agenda li::before { margin-bottom: 2px; }
   .facts-row { margin-top: 14px; font-size: 13.5px; }
 }
+/* cover: smaller title, bigger live cloud */
+.cover { gap: 3vw; }
+.cover-text { flex: 0 0 32%; }
+.cover h1 { max-width: 14ch; font-size: clamp(30px, 2.9vw, 50px); line-height: 1.1; }
+.cover .lede { max-width: 30ch; font-size: clamp(15px, 1.15vw, 19px) !important; }
+.cover .frame { height: 90%; }
+.cover .frame { height: 94%; }
+.lede.wide { max-width: 70ch; font-size: clamp(16px, 1.2vw, 20px) !important; }
+.stepcards-slide { justify-content: flex-start; padding-top: 30px; }
+.stepcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 18px; min-height: 0; }
+.stepcard { padding: 14px 16px; border: 1px solid #3a3b46; border-radius: 6px; background: var(--panel); overflow: hidden; }
+.stepcard h3 { margin: 0 0 4px; font: 600 clamp(16px, 1.2vw, 20px) var(--sans); }
+.stepcard .sig { margin: 0 0 10px; color: var(--muted); font: clamp(11px, .8vw, 13px) var(--mono) !important; }
+.stepcard .tell { margin: 0 0 4px; color: var(--muted); font: 500 11px var(--mono) !important; text-transform: uppercase; letter-spacing: .06em; }
+.stepcard ul { margin: 0 0 10px; padding-left: 1.1em; }
+.stepcard li { margin-bottom: 3px; font-size: clamp(12.5px, .92vw, 15px) !important; line-height: 1.4 !important; color: #d6d5dd; }
+.stepcard .look { margin: 0 0 6px; color: #cfced8; font: clamp(11px, .8vw, 13px) var(--mono) !important; }
+.stepcard .look span { margin-right: 6px; padding: 1px 6px; border-radius: 99px; background: #23242c; color: var(--muted); font-size: 10px; text-transform: uppercase; }
+.stepcard .cp { margin: 0 0 4px; color: var(--praise); font: clamp(11px, .8vw, 13px) var(--mono) !important; }
+.stepcard .mistake { margin: 0; color: var(--complaint); font: clamp(11px, .8vw, 13px) var(--mono) !important; }
+.stepcard .hintline { margin: 4px 0 0; color: #bdbcc6; font-style: italic; font-size: clamp(12px, .9vw, 14px) !important; }

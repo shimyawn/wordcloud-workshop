@@ -117,10 +117,10 @@ function selectTopN(terms, N) {
 // and walking out along a spiral until its box overlaps nothing. No randomness.
 const measure = document.createElement('canvas').getContext('2d');
 
-function layoutCloud(terms, bandIndex, size, width, bandHeight) {
-  const top = bandIndex * bandHeight + CONFIG.bandPad.top;
-  const bottom = (bandIndex + 1) * bandHeight - CONFIG.bandPad.bottom;
-  const centre = { x: width / 2, y: (top + bottom) / 2 };
+function layoutCloud(terms, bandIndex, size, box) {                 // box = { x, y, w, h }: where this cloud may go
+  const top = box.y + CONFIG.bandPad.top;
+  const bottom = box.y + box.h - CONFIG.bandPad.bottom;
+  const centre = { x: box.x + box.w / 2, y: (top + bottom) / 2 };
   const { step, gap, squash } = CONFIG.spiral;
   const placed = [];
   let unplaced = 0;
@@ -145,7 +145,7 @@ function layoutCloud(terms, bandIndex, size, width, bandHeight) {
       const angle = k * step;
       const x = target + gap * angle * Math.cos(angle) * squash;
       const y = centre.y + gap * angle * Math.sin(angle);
-      if (x - w / 2 < 4 || x + w / 2 > width - 4 || y - h / 2 < top || y + h / 2 > bottom) continue;
+      if (x - w / 2 < box.x + 4 || x + w / 2 > box.x + box.w - 4 || y - h / 2 < top || y + h / 2 > bottom) continue;
       const near = cellsOf(x, y, w, h).flatMap(key => grid.get(key) || []);
       if (!near.some(p => Math.abs(p.x - x) < (p.w + w) / 2 && Math.abs(p.y - y) < (p.h + h) / 2)) spot = { x, y };
     }
@@ -161,8 +161,8 @@ function layoutCloud(terms, bandIndex, size, width, bandHeight) {
 
 
 // STEP 6 · Draw one cloud per source and its words; hover a word for its counts and one real sentence.
-function drawCloud({ bands, width, bandHeight }, animate) {
-  const height = bands.length * bandHeight;
+function drawCloud({ bands, width }, animate) {
+  const height = d3.max(bands, b => b.box.y + b.box.h);
   const svg = d3.select('#cloud').attr('width', width).attr('height', height);
 
   const g = svg.selectAll('g.band').data(bands).join(enter => {
@@ -170,9 +170,9 @@ function drawCloud({ bands, width, bandHeight }, animate) {
     b.append('line'); b.append('text').attr('class', 'band-name'); b.append('text').attr('class', 'band-note');
     return b;
   });
-  g.select('line').attr('x2', width).attr('y1', (d, i) => i * bandHeight).attr('y2', (d, i) => i * bandHeight);
-  g.select('.band-name').attr('x', 8).attr('y', (d, i) => i * bandHeight + 22).text(d => d.source);
-  g.select('.band-note').attr('x', 8).attr('y', (d, i) => (i + 1) * bandHeight - 10)
+  g.select('line').attr('x1', d => d.box.x).attr('x2', d => d.box.x + d.box.w).attr('y1', d => d.box.y).attr('y2', d => d.box.y);
+  g.select('.band-name').attr('x', d => d.box.x + 8).attr('y', d => d.box.y + 22).text(d => d.source);
+  g.select('.band-note').attr('x', d => d.box.x + 8).attr('y', d => d.box.y + d.box.h - 10)
     .text(d => d.note);
 
   const t = d3.transition().duration(animate ? 600 : 0);
@@ -220,18 +220,32 @@ async function main() {
         const r = selectTopN(s.terms, N);
         const cut = r.cutTies ? ` · ${r.cutTies} of them cut off` : '';
         return { source: s.source, kept: r.kept,
-          note: `Top ${N} of ${s.terms.length.toLocaleString('en-US')} · rank ${Math.min(N, s.terms.length)} = ${r.last.count} sentences · ${r.tied} terms share that count${cut}` };
+          note: N <= 10                                                   // narrow columns: a short note
+            ? `rank ${N} = ${r.last.count} sentences · ${r.tied} tied${cut}`
+            : `Top ${N} of ${s.terms.length.toLocaleString('en-US')} · rank ${Math.min(N, s.terms.length)} = ${r.last.count} sentences · ${r.tied} terms share that count${cut}` };
       });
-      const size = d3.scaleSqrt().domain([1, d3.max(selected.flatMap(s => s.kept), t => t.count)]).range(CONFIG.fontRange);
-      const width = Math.max(720, document.getElementById('stage').clientWidth);
-      const area = d3.max(selected, s => d3.sum(s.kept, t => size(t.count) ** 2 * (t.term.length * 0.55 + 0.4)));
-      let bandHeight = Math.max(CONFIG.bandHeight, Math.ceil(area * 1.9 / width / 20) * 20), bands;   // start near the needed height
+      const width = Math.max(600, document.getElementById('stage').clientWidth);
+      const stage = document.getElementById('stage');
+      const visible = innerHeight - Math.min(stage.offsetTop, innerHeight * 0.3) - 16;
+      // Layout follows N: 10 → three clouds side by side · 50, 100 → stacked in one screen · 1000 → one source per screen
+      const mode = N <= 10 ? 'columns' : N >= 1000 ? 'pages' : 'rows';
+      const boxH = mode === 'columns' ? Math.max(260, visible) : mode === 'pages' ? Math.max(320, visible) : Math.max(150, Math.floor(visible / 3));
+      const boxesFor = h => selected.map((s, i) => mode === 'columns'
+        ? { x: i * width / 3, y: 0, w: width / 3, h }
+        : { x: 0, y: i * h, w: width, h });
+      const boxW = mode === 'columns' ? width / 3 : width;
+      const fontMax = mode === 'columns' ? Math.min(60, boxW / 6) : mode === 'pages' ? Math.max(18, Math.round(30 * visible / 785)) : Math.round(CONFIG.fontRange[1] * Math.min(boxH / CONFIG.bandHeight, width / 1100));
+      const size = d3.scaleSqrt().domain([1, d3.max(selected.flatMap(s => s.kept), t => t.count)]).range([mode === 'pages' ? (visible < 600 ? 7 : 8) : CONFIG.fontRange[0], fontMax]);
+      CONFIG.spiral.squash = Math.max(1.6, Math.min(4, boxW / boxH / 2.2));
+      let h = boxH, bands;
       for (let attempt = 0; attempt < 40; attempt++) {
-        bands = selected.map((s, i) => ({ source: s.source, note: s.note, ...layoutCloud(s.kept, i, size, width, bandHeight) }));
+        const boxes = boxesFor(h);
+        bands = selected.map((s, i) => ({ source: s.source, note: s.note, box: boxes[i], ...layoutCloud(s.kept, i, size, boxes[i]) }));
         if (bands.every(b => b.unplaced === 0)) break;
-        bandHeight += CONFIG.bandGrow;
+        h += CONFIG.bandGrow * (mode === 'pages' ? 3 : 1);
       }
-      drawCloud({ bands, width, bandHeight }, animate);
+      drawCloud({ bands, width }, animate);
+      console.log(`[Task 1] mode ${mode} · cloud height ${h}px · visible ${visible}px`);
       console.log(`[Task 1] top ${N}:`, bands.map(b => `${b.source}: ${b.note}`).join(' | '));
     };
     await document.fonts.ready;
