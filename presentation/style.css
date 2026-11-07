@@ -381,3 +381,40 @@ pre.code.snippet { flex: 0 0 auto; padding: 18px 0; overflow: auto; }
 .details-grid div { padding-top: 12px; border-top: 2px solid var(--rule); }
 .details-grid h3 { margin: 0 0 6px; font: 600 clamp(16px, 1.2vw, 19px) var(--sans); }
 .details-grid p { margin: 0; color: #cfced8; font-size: clamp(14px, 1vw, 16.5px) !important; line-height: 1.5 !important; }
+
+/* ---- robustness across aspect ratios ---- */
+.sources { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 18px; max-width: 1400px; }
+.src { padding: 12px 14px; border: 1px solid #3a3b46; border-radius: 6px; background: var(--panel); min-width: 0; }
+.src .site { color: var(--muted); font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+.src b { display: block; margin: 2px 0 2px; font: 600 clamp(17px, min(1.4vw, 2.6vh), 24px) var(--sans); }
+.src p { margin: 0; color: #cfced8; font-size: clamp(13px, min(1vw, 1.9vh), 16px) !important; line-height: 1.4 !important; }
+.src p.n { margin-top: 4px; color: var(--muted); font: clamp(11px, min(.8vw, 1.6vh), 13px) var(--mono) !important; }
+.src code { display: block; margin-top: 8px; color: var(--praise); font-size: clamp(11px, min(.8vw, 1.6vh), 13px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.data-split { margin-top: 14px; }
+
+/* stepper: six equal columns, never wraps or overlaps */
+.stepper { display: grid !important; grid-template-columns: repeat(6, minmax(0, 1fr)); width: 100%; max-width: 1400px; }
+.stepper li { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: clamp(10px, min(.85vw, 1.7vh), 13px) !important; }
+
+/* step pages: everything visible in one screen */
+.step-slide { padding-top: max(16px, 2.5vh); padding-bottom: max(12px, 2vh); }
+.step-slide h2 { font-size: clamp(22px, min(2.4vw, 4.4vh), 40px); margin: 0; }
+.step-slide .label { margin-bottom: 6px; }
+.step-slide .stepper { margin: 6px 0 10px; }
+.step-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(16px, 2vw, 32px); align-items: start; }
+.step-text .why-line, .step-text li { font-size: clamp(12.5px, min(1vw, 2vh), 16.5px) !important; }
+.step-text .sig, .step-text .look, .step-text .cp, .step-text .mistake { font-size: clamp(10.5px, min(.85vw, 1.7vh), 14px) !important; }
+.step-slide pre.code.snippet { font-size: clamp(10.5px, min(.85vw, 1.75vh), 14.5px); white-space: pre-wrap; overflow: visible; }
+.step-slide pre.code .line { white-space: pre-wrap; padding-left: 3.6em; text-indent: -3.6em; }
+pre.code.snippet { white-space: pre-wrap; }
+
+/* cover: the live cloud keeps a steady frame */
+.cover { align-items: stretch; padding-top: 4vh; padding-bottom: 4vh; }
+.cover-text { display: flex; flex-direction: column; justify-content: center; }
+.cover .frame { height: auto; align-self: stretch; }
+
+/* Large screens: scale slide content up from the 1500 × 860 design size (set by present.js as --k). */
+.slide:not(.demo):not(.cover) > *, .cover-text { zoom: var(--k, 1); }
+.nav { zoom: var(--k, 1); }
+.deck { top: calc(var(--nav) * var(--k, 1)); }
+.step-slide, .stepcards-slide, .piece-slide { justify-content: center; }

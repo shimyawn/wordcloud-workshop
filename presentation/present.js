@@ -60,6 +60,14 @@ const QUIZ = [
     answer: 1, why: 'Each word starts at the average of the corners, weighted by its count per source. good is in 78 Dining, 48 Film and 67 Tech sentences. Judgement words are shared across domains; topic words like food, movie and phone stay in one corner.' }
 ];
 
+// ---------------- Scale for large screens ----------------
+function fitScale() {
+  const k = Math.max(1, Math.min(1.8, Math.min(innerWidth / 1500, (innerHeight - 56) / 800)));
+  document.documentElement.style.setProperty('--k', k.toFixed(3));
+}
+fitScale();
+addEventListener('resize', fitScale);
+
 // ---------------- Navigation ----------------
 const slides = [...document.querySelectorAll('.slide')];
 const menuButtons = [...document.querySelectorAll('[data-menu]')].filter(el => el.tagName === 'BUTTON');
@@ -106,6 +114,7 @@ const EMBED_CSS = `
   .intro h1, .intro .subtitle, .intro .kicker, .intro .eyebrow, footer.how, .how-to-read { display: none !important; }
   .intro { padding: 12px 0 0 !important; }
   .intro, .axis, .stage { width: calc(100% - 32px) !important; }   /* use the whole frame, not the page's reading width */
+  body { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }   /* centre the clouds in the frame */
   html { zoom: 0.82; }
 `;
 

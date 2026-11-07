@@ -36,7 +36,6 @@
         <p class="label">D3.js word cloud workshop</p>
         <h1>Build a word cloud that shows which words people use to praise and which to complain</h1>
         <p class="lede">3,000 review sentences (Yelp, IMDb, Amazon), one cloud per source. Size = how often; colour = praise or complaint.</p>
-        <p class="hint">← → move · 0–7 jump · N notes · T timer · F full screen · G glossary</p>
       </div>
       <div class="frame"><iframe data-src="../Wordcloud_clean/index.html" title="Our word cloud"></iframe></div>
       <aside class="notes">Open on our cloud: one cloud per source, the biggest words in the middle, green for praise and pink for complaints. Today: why it looks like this, its code, then two changes: how many words it shows (Task 1) and what position means (Task 2).</aside>
@@ -44,14 +43,14 @@
 
     <section class="slide" data-menu="0">
       <p class="label">0 · Start</p>
-      <h2>Same menus as the student guide: follow along there.</h2>
+      <h2>Overview</h2>
       <ol class="agenda">
         <li><b>The method</b><span>What a word cloud encodes, and its blind spots</span></li>
         <li><b>The data</b><span>3,000 labelled sentences · preprocessing: from a sentence to terms</span></li>
         <li><b>Our design</b><span>Three tones · size and layout</span></li>
         <li><b>The code</b><span>Build in 6 steps · the key D3 pieces</span></li>
-        <li><b>Task 1</b><span>Top 10, 50, 100, 1000: how many words?</span></li>
-        <li><b>Task 2</b><span>One cloud, three corners</span></li>
+        <li><b>Task 1</b><span>Top-N filtering</span></li>
+        <li><b>Task 2</b><span>Source as position</span></li>
         <li><b>Wrap-up</b><span>Check &amp; submit · quiz · glossary</span></li>
       </ol>
       <div class="facts-row">
@@ -65,7 +64,7 @@
     <!-- ===================== 1 · THE METHOD ===================== -->
     <section class="slide" data-menu="1">
       <p class="label">1 · The method</p>
-      <h2>What a word cloud encodes: bigger means more often.</h2>
+      <h2>Word Cloud: Marks and Channels</h2>
       <div class="columns two">
         <div class="col"><h3>What it does well</h3><p>The <dfn data-g="mark">mark</dfn> is the word itself and its size is the main <dfn data-g="channel">channel</dfn>. You get an <dfn data-g="overview">overview</dfn> of a whole text at once, and big or bright words <dfn data-g="popout">pop out</dfn> before you search.</p></div>
         <div class="col"><h3 class="complaint">What it hides</h3><p><b>Position means nothing</b>: words are packed wherever they fit. <b>Long words look bigger</b> at the same count. <b>Cut words leave no trace</b>: most words must be left out, and the reader cannot see how many.</p></div>
@@ -78,7 +77,7 @@
       <div class="demo-head">
         <div>
           <p class="label">1 · The method</p>
-          <h2>Our cloud: one per source, biggest words in the middle, colour for tone.</h2>
+          <h2>Our Word Cloud</h2>
         </div>
       </div>
       <div class="frame tall"><iframe data-src="../Wordcloud_clean/index.html" title="Our word cloud"></iframe></div>
@@ -88,32 +87,31 @@
     <!-- ===================== 2 · THE DATA ===================== -->
     <section class="slide" data-menu="2">
       <p class="label">2 · The data</p>
-      <h2>3,000 sentences, each labelled praise or complaint.</h2>
+      <h2>Dataset: Three Labelled Sources</h2>
+      <div class="sources">
+        <div class="src"><span class="site">Yelp</span><b>Dining</b><p>restaurant reviews</p><p class="n">1,000 sentences · 500 praise · 500 complaints</p><code>Crust is not good. ⇥ 0</code></div>
+        <div class="src"><span class="site">IMDb</span><b>Film</b><p>movie reviews</p><p class="n">1,000 sentences · 500 praise · 500 complaints</p><code>A very, very, very slow-moving, aimless movie about a distressed, drifting young man. ⇥ 0</code></div>
+        <div class="src"><span class="site">Amazon</span><b>Tech</b><p>product reviews (phones and accessories)</p><p class="n">1,000 sentences · 500 praise · 500 complaints</p><code>Good case, Excellent value. ⇥ 1</code></div>
+      </div>
       <div class="split data-split">
-        <div>
-          <pre class="raw"><span class="muted">yelp_labelled.txt · one sentence, a tab, a label</span>
-Wow... Loved this place.<span class="tab">⇥</span>1
-Crust is not good.<span class="tab">⇥</span>0
-The food, amazing.<span class="tab">⇥</span>1</pre>
-          <table class="table compact">
-            <tbody>
-              <tr><td><dfn data-g="item">Item</dfn></td><td>One sentence · Yelp (Dining), IMDb (Film), Amazon (Tech) · 1,000 each</td></tr>
-              <tr><td><dfn data-g="attribute">Attributes</dfn></td><td>Text · label 1 / 0 (<dfn data-g="categorical">categorical</dfn>) · source (categorical)</td></tr>
-              <tr><td>By design</td><td>500 praise : 500 complaints per source, so 50% means "used equally in both"</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <table class="table compact">
+          <tbody>
+            <tr><td><dfn data-g="item">Item</dfn></td><td>One sentence taken from a review, in a file per site: the sentence, a tab, then its label</td></tr>
+            <tr><td><dfn data-g="attribute">Attributes</dfn></td><td>Text · label: 1 = positive (praise), 0 = negative (complaint) · source: which site (<dfn data-g="categorical">categorical</dfn>)</td></tr>
+            <tr><td>By design</td><td>Each site is balanced 500 : 500, so 50% means "used equally in both"</td></tr>
+          </tbody>
+        </table>
         <div class="side">
-          <p class="stat"><span class="big">Sentence</span> The label belongs to the whole sentence, not to any word. We count how many sentences contain a word.</p>
-          <p class="stat"><span class="big">58%</span> of the 5,069 distinct words appear in one sentence only: a <dfn data-g="longtail">long tail</dfn>. Some words must be left out.</p>
+          <p class="stat"><span class="big">Sentence</span> The label belongs to the whole sentence, not to any word: we count how many sentences contain a word.</p>
+          <p class="stat"><span class="big">58%</span> of the 5,069 distinct words appear in one sentence only: a <dfn data-g="longtail">long tail</dfn>.</p>
         </div>
       </div>
-      <aside class="notes">Two facts drive everything: labels are per sentence, and most words are rare.</aside>
+      <aside class="notes">The dataset was built to test whether a sentiment model trained on one kind of review works on another. That is why it comes as three separate, labelled sets, and why we draw one cloud per site.</aside>
     </section>
 
     <section class="slide" data-menu="2">
       <p class="label">2 · The data · Preprocessing</p>
-      <h2>Preprocessing: from a sentence to terms.</h2>
+      <h2>Preprocessing</h2>
       <div class="prep">
         <div class="prep-step"><span class="n">1</span><b>Tokenize</b><p>Lowercase, split contractions, keep letters.</p><code>the · food · is · not · very · good</code></div>
         <div class="prep-step"><span class="n">2</span><b>Remove <dfn data-g="stopwords">stop words</dfn></b><p>About 110 grammar words. Without this, the biggest words would be <i>the</i> (1,334 sentences), <i>and</i>, <i>i</i>, <i>a</i>.</p><code>food · not · very · good</code></div>
@@ -134,7 +132,7 @@ The food, amazing.<span class="tab">⇥</span>1</pre>
     <!-- ===================== 3 · OUR DESIGN ===================== -->
     <section class="slide" data-menu="3">
       <p class="label">3 · Our design</p>
-      <h2>Three tones: a diverging palette.</h2>
+      <h2>Colour: Diverging Palette</h2>
       <div class="split">
         <table class="tones-big">
           <tr><td><i class="sw praise"></i></td><td>≥ 70%</td><td>praise</td><td class="muted">great 93% · delicious · excellent</td></tr>
@@ -152,7 +150,7 @@ The food, amazing.<span class="tab">⇥</span>1</pre>
 
     <section class="slide" data-menu="3">
       <p class="label">3 · Our design</p>
-      <h2>Size and layout.</h2>
+      <h2>Size and Layout</h2>
       <table class="table">
         <thead><tr><th>Channel</th><th>Encodes</th><th>Because</th></tr></thead>
         <tbody>
@@ -168,7 +166,7 @@ The food, amazing.<span class="tab">⇥</span>1</pre>
     <!-- ===================== 4 · THE CODE ===================== -->
     <section class="slide" data-menu="4">
       <p class="label">4 · The code</p>
-      <h2>The code: build in 6 steps.</h2>
+      <h2>Build in Six Steps</h2>
       <p class="lede wide">Each step is one function in <code>wordcloud.js</code>. Write your own request to Copilot from the points under <b>Tell Copilot</b>, reload the page, and compare the console with the <b>checkpoint</b> before you go on. Put every number you choose in one <code>CONFIG</code> object at the top of the file.</p>
       <ol class="stepper"><li class=""><span>1</span>loadData</li><li class=""><span>2</span>toTerms</li><li class=""><span>3</span>countTerms</li><li class=""><span>4</span>selectTerms</li><li class=""><span>5</span>layoutCloud</li><li class=""><span>6</span>drawCloud</li></ol>
       <aside class="notes">One page per step next, each with its Copilot points, what to look for, the checkpoint and the few lines of code that matter.</aside>
@@ -329,8 +327,8 @@ for (let k = 0; !spot; k++) {
     </section>
 
     <section class="slide" data-menu="4">
-      <p class="label">4 · The code · Details we added for the interface</p>
-      <h2>Small choices that make it read well.</h2>
+      <p class="label">4 · The code</p>
+      <h2>Design Details</h2>
       <div class="details-grid">
         <div><h3>Tone</h3><p>Green ≥ 70%, pink ≤ 30%, grey between. Grey is dimmed (opacity 0.45) so big neutral nouns do not pull the eye.</p></div>
         <div><h3>Size</h3><p><code>d3.scaleSqrt</code>: area grows with the count. One scale for all clouds, and fonts shrink with the screen so all three fit at once.</p></div>
@@ -345,7 +343,7 @@ for (let k = 0; !spot; k++) {
     <!-- ===================== 5 · TASK 1 ===================== -->
     <section class="slide" data-menu="5">
       <p class="label">5 · Task 1 · Live modification · edit by hand</p>
-      <h2>Task 1 · Top 10, 50, 100, 1000: how many words?</h2>
+      <h2>Task 1 · Top-N Filtering</h2>
       <div class="task">
         <div><h3>Objective</h3><p>Replace our rule (7 sentences or more) with the most common filter: sort by count and keep the top N. See what each N shows, and what the cut does to tied words.</p></div>
         <div><h3>Requirements</h3>
@@ -366,14 +364,14 @@ for (let k = 0; !spot; k++) {
     </section>
 
     <section class="slide demo" data-menu="5">
-      <div class="demo-head"><div><p class="label">5 · Task 1</p><h2>A finished Task 1. Try 10, then 1000.</h2></div></div>
+      <div class="demo-head"><div><p class="label">5 · Task 1</p><h2>Task 1 · Result</h2></div></div>
       <div class="frame tall"><iframe data-src="../Wordcloud_task1/index.html" title="Task 1 demo"></iframe></div>
       <aside class="notes">Top 10: nearly all grey nouns, the cloud says what people talk about, not how they judge it. Top 1000: a wall of tiny words, and in Dining 1,227 words tie at one sentence, so the last 1,002 are cut by alphabetical order.</aside>
     </section>
 
     <section class="slide" data-menu="5">
       <p class="label">5 · Task 1</p>
-      <h2>Talk about it.</h2>
+      <h2>Discussion</h2>
       <ul class="points questions">
         <li>Why are the top 10 almost all grey nouns?</li>
         <li>At top 1000, which words made the cut, and why those?</li>
@@ -385,7 +383,7 @@ for (let k = 0; !spot; k++) {
     <!-- ===================== 6 · TASK 2 ===================== -->
     <section class="slide" data-menu="6">
       <p class="label">6 · Task 2 · Live modification · edit by hand</p>
-      <h2>Task 2 · One cloud, three corners.</h2>
+      <h2>Task 2 · Source as Position</h2>
       <div class="task">
         <div><h3>Objective</h3><p>Show the third attribute, source, inside one cloud. Put Dining, Tech and Film at the corners of an upside-down triangle; each word sits closest to the source that uses it most. Colour still shows praise or complaint.</p></div>
         <div><h3>Requirements</h3>
@@ -406,14 +404,14 @@ for (let k = 0; !spot; k++) {
     </section>
 
     <section class="slide demo" data-menu="6">
-      <div class="demo-head"><div><p class="label">6 · Task 2</p><h2>A finished Task 2. Hover a word for its counts per source.</h2></div></div>
+      <div class="demo-head"><div><p class="label">6 · Task 2</p><h2>Task 2 · Result</h2></div></div>
       <div class="frame tall"><iframe data-src="../Wordcloud_task2/index.html" title="Task 2 demo"></iframe></div>
       <aside class="notes">The middle is full of evaluative words (good, great, bad, best, love): they travel across domains. The corners hold the topics: food and service, movie and plot, phone and battery. And some judgements stay home: delicious, rude in Dining; script, plot in Film; junk, broke in Tech.</aside>
     </section>
 
     <section class="slide" data-menu="6">
       <p class="label">6 · Task 2</p>
-      <h2>Talk about it.</h2>
+      <h2>Discussion</h2>
       <ul class="points questions">
         <li>Which kind of word sits in the middle, and which in the corners?</li>
         <li>Find a praise or complaint word that stays in one corner. Why there?</li>
@@ -425,7 +423,7 @@ for (let k = 0; !spot; k++) {
     <!-- ===================== 7 · WRAP-UP ===================== -->
     <section class="slide" data-menu="7">
       <p class="label">7 · Wrap-up</p>
-      <h2>One cloud, two changes, two lessons.</h2>
+      <h2>Summary</h2>
       <div class="columns">
         <div class="col"><h3>Base: cut by a rule</h3><p>A classic cloud. Every word in 7 sentences or more, the fewest that can lean, coloured by tone. The rule is written on the page, and so is what it hides.</p></div>
         <div class="col"><h3>Task 1: cut by a count</h3><p>A top N is easy to explain. It draws an arbitrary line through tied words, and a large N fills the page with one-sentence evidence.</p></div>
@@ -436,7 +434,7 @@ for (let k = 0; !spot; k++) {
 
     <section class="slide" data-menu="7">
       <p class="label">7 · Wrap-up</p>
-      <h2>Wrap-up: check &amp; submit.</h2>
+      <h2>Checklist and Submission</h2>
       <div class="columns two">
         <div class="col"><h3>Check</h3>
           <ul class="brief">
@@ -456,21 +454,21 @@ for (let k = 0; !spot; k++) {
 
     <section class="slide" data-menu="7">
       <p class="label">7 · Wrap-up · Quiz</p>
-      <h2>Three questions.</h2>
+      <h2>Quiz</h2>
       <div class="quiz" id="quiz"></div>
       <aside class="notes">Let them call out answers before you click.</aside>
     </section>
 
     <section class="slide glossary-slide" data-menu="7">
       <p class="label">7 · Wrap-up · Glossary</p>
-      <h2>The words we used today.</h2>
+      <h2>Glossary</h2>
       <div class="glossary" id="glossary"></div>
       <aside class="notes">Press G on any slide to jump here. Dotted words on the slides show the definition on hover.</aside>
     </section>
 
     <section class="slide closing" data-menu="7">
       <p class="label">7 · Wrap-up</p>
-      <h2>Your turn.</h2>
+      <h2>Student Guide</h2>
       <p class="url" id="student-url"></p>
       <p class="note">Build the base in six steps, check each checkpoint, then do Task 1 and Task 2 by hand.</p>
       <aside class="notes">Show the link, give them the time box, and walk around.</aside>
