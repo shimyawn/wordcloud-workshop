@@ -254,11 +254,12 @@
   .replace(/n[&#x27;’]t\b/g, &#x27; not&#x27;)               // isn’t → is not
   .match(/[a-z]+/g) || [];
 
+const skippable = w =&gt; FUNCTION_WORDS.has(w) || SKIP_WORDS.has(w);
 const terms = new Set();                     // each term once per sentence
 for (let i = 0; i &lt; tokens.length; i++) {
   const word = tokens[i];
   if (NEGATORS.has(word)) {                  // not · no · never
-    let j = i + 1;                           // look past up to 2 words like very
+    let j = i + 1;                           // up to 2 words ahead
     while (j &lt;= i + 2 &amp;&amp; skippable(tokens[j])) j++;
     terms.add(`not ${tokens[j]}`);           // → &quot;not good&quot;
     i = j;                                   // &#x27;good&#x27; is used up
