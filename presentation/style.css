@@ -491,3 +491,6 @@ details.wordlist p { margin: 12px 0 0; color: var(--muted); font-size: 14px !imp
 .agenda li.ag-bonus::before { content: '+'; }
 
 .menu button { padding-left: clamp(6px, 0.7vw, 12px); padding-right: clamp(6px, 0.7vw, 12px); }
+
+.our-question { margin: 22px 0 0; padding: 14px 20px; border-left: 3px solid var(--praise); background: rgba(164,255,100,0.06); border-radius: 0 6px 6px 0; max-width: 1400px; color: var(--ink); font-size: clamp(16px, 1.35vw, 22px) !important; font-weight: 600; line-height: 1.4; }
+.our-question span { display: block; margin-bottom: 4px; color: var(--praise); font: 500 12px var(--mono) !important; letter-spacing: 0.08em; text-transform: uppercase; }
