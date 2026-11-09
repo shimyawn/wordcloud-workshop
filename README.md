@@ -8,6 +8,7 @@ Open this folder in VS Code and start Live Server here, so the presentation can 
 | `Wordcloud_clean/` | Our word cloud: one classic cloud per source, size = sentences, colour = tone. Six functions in `wordcloud.js` |
 | `Wordcloud_task1/` | Task 1 result: top 10 / 50 / 100 / 1000 by count, with the tie note |
 | `Wordcloud_task2/` | Task 2 result: one cloud for all three sources, Dining · Tech · Film at the corners of an upside-down triangle |
+| `Wordcloud_fun/` | Bonus: a different goal. One praise cloud and one complaint cloud, neutral words hidden, colour = source (white = shared) |
 | `student-guide/` | The student guide (EN / 中文). No code, no finished cloud, no complete prompts |
 
 ## Before presenting
