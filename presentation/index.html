@@ -231,7 +231,7 @@
     label: Number(line.slice(tab + 1)),     // 1 = praise, 0 = complaint
     source: file.source                     // Dining · Film · Tech
   });
-}</pre><p class="caption">The lines that matter, shortened from wordcloud.js</p></div>
+}</pre></div>
       </div>
       <aside class="notes">Read the checkpoint aloud. If the number differs, fix this step before the next one.</aside>
     </section>
@@ -259,7 +259,7 @@ if (NEGATORS.has(word)) {                    // not · no · never
   terms.add(`not ${next}`);                  // → &quot;not good&quot;
   i = j;                                     // &#x27;good&#x27; is used up
 }
-else if (!FUNCTION_WORDS.has(word)) terms.add(word);</pre><p class="caption">The lines that matter, shortened from wordcloud.js</p></div>
+else if (!FUNCTION_WORDS.has(word)) terms.add(word);</pre></div>
       </div>
       <aside class="notes">Read the checkpoint aloud. If the number differs, fix this step before the next one.</aside>
     </section>
@@ -283,7 +283,7 @@ else if (!FUNCTION_WORDS.has(word)) terms.add(word);</pre><p class="caption">The
 const count = c.praise + c.complaint;
 const share = (c.praise + 5) / (count + 10);   // smoothed
 const tone  = share &gt;= 0.70 ? &#x27;praise&#x27;
-            : share &lt;= 0.30 ? &#x27;complaint&#x27; : &#x27;neutral&#x27;;</pre><p class="caption">The lines that matter, shortened from wordcloud.js</p></div>
+            : share &lt;= 0.30 ? &#x27;complaint&#x27; : &#x27;neutral&#x27;;</pre></div>
       </div>
       <aside class="notes">Read the checkpoint aloud. If the number differs, fix this step before the next one.</aside>
     </section>
@@ -305,7 +305,7 @@ const tone  = share &gt;= 0.70 ? &#x27;praise&#x27;
         <div class="snippet-box"><pre class="code snippet">const kept = terms
   .filter(t =&gt; t.count &gt;= 7)                  // 7 / 0 → 71%: can reach a colour
   .sort((a, b) =&gt; b.count - a.count || a.term.localeCompare(b.term));
-return { kept, leftOut: terms.length - kept.length };</pre><p class="caption">The lines that matter, shortened from wordcloud.js</p></div>
+return { kept, leftOut: terms.length - kept.length };</pre></div>
       </div>
       <aside class="notes">Read the checkpoint aloud. If the number differs, fix this step before the next one.</aside>
     </section>
@@ -332,7 +332,7 @@ for (let k = 0; !spot; k++) {
   const x = target   + 1.2 * a * Math.cos(a) * 1.6;
   const y = centre.y + 1.2 * a * Math.sin(a);
   if (!overlaps(x, y, w, h)) spot = { x, y };
-}</pre><p class="caption">The lines that matter, shortened from wordcloud.js</p></div>
+}</pre></div>
       </div>
       <aside class="notes">Read the checkpoint aloud. If the number differs, fix this step before the next one.</aside>
     </section>
@@ -358,7 +358,7 @@ for (let k = 0; !spot; k++) {
   .attr(&#x27;fill&#x27;, d =&gt; CONFIG.colors[d.tone])
   .attr(&#x27;x&#x27;, d =&gt; d.x).attr(&#x27;y&#x27;, d =&gt; d.y)
   .attr(&#x27;font-size&#x27;, d =&gt; d.fontSize)
-  .on(&#x27;mousemove&#x27;, showTooltip);</pre><p class="caption">The lines that matter, shortened from wordcloud.js</p></div>
+  .on(&#x27;mousemove&#x27;, showTooltip);</pre></div>
       </div>
       <aside class="notes">Read the checkpoint aloud. If the number differs, fix this step before the next one.</aside>
     </section>
