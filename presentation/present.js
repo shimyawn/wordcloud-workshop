@@ -1,6 +1,6 @@
 // Presentation deck: navigation, live iframes, small charts, and our real code shown by section.
 
-const STUDENT_SITE_URL = 'https://YOUR-NAME.github.io/student-guide/';   // fill in after deploying website 2
+const STUDENT_SITE_URL = 'https://shimyawn.github.io/wordcloud-workshop/student-guide/';
 const CODE_FILES = {                       // the slides read the real files, so the deck always shows the current code
   js: '../Wordcloud_clean/wordcloud.js',
   html: '../Wordcloud_clean/index.html'
