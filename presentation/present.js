@@ -322,3 +322,37 @@ document.addEventListener('slidechange', () => {
 });
 
 document.getElementById('student-url').textContent = STUDENT_SITE_URL;
+
+// ---------------- Smoothed share calculator (slide 2-3) ----------------
+const pcPraise = document.getElementById('pc-praise'), pcComplaint = document.getElementById('pc-complaint');
+function updatePcalc() {
+  const pr = Math.max(0, Number(pcPraise.value) || 0), co = Math.max(0, Number(pcComplaint.value) || 0);
+  const share = (pr + 5) / (pr + co + 10);
+  const tone = share >= 0.70 ? ['praise', 'praise'] : share <= 0.30 ? ['complaint', 'complaint'] : ['neutral', 'either way'];
+  document.getElementById('pc-share').textContent = `${Math.round(share * 100)}%`;
+  const chip = document.getElementById('pc-tone'); chip.textContent = tone[1]; chip.className = `pchip ${tone[0]}`;
+  const n = pr + co, raw = n ? Math.round(pr / n * 100) : null;
+  document.getElementById('pc-note').textContent = n === 0 ? 'no sentences: 50%, the midpoint'
+    : `raw ${raw}% · ${n} sentence${n === 1 ? '' : 's'}${n < 7 ? ' · too few to reach a colour' : ''}`;
+}
+if (pcPraise) {
+  [pcPraise, pcComplaint].forEach(el => el.addEventListener('input', updatePcalc));
+  document.querySelectorAll('.pcalc-examples button').forEach(b => b.addEventListener('click', () => {
+    pcPraise.value = b.dataset.p; pcComplaint.value = b.dataset.c; updatePcalc();
+  }));
+  updatePcalc();
+}
+
+// ---------------- Spiral sketch (slide 3-2) ----------------
+(function spiralSketch() {
+  const svg = document.getElementById('spiral-pres');
+  if (!svg) return;
+  const ns = 'http://www.w3.org/2000/svg', pts = [];
+  for (let k = 0; k < 420; k++) { const a = k * 0.12; pts.push([180 + 1.2 * a * Math.cos(a) * 1.6, 110 + 1.2 * a * Math.sin(a)]); }
+  const path = document.createElementNS(ns, 'path');
+  path.setAttribute('d', 'M' + pts.map(q => q.map(v => v.toFixed(1)).join(',')).join('L'));
+  path.setAttribute('fill', 'none'); path.setAttribute('stroke', '#5d5e69'); path.setAttribute('stroke-width', '1.2');
+  const dot = document.createElementNS(ns, 'circle');
+  dot.setAttribute('cx', 180); dot.setAttribute('cy', 110); dot.setAttribute('r', 5); dot.setAttribute('fill', '#a4ff64');
+  svg.append(path, dot);
+})();

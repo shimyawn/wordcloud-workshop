@@ -121,14 +121,24 @@
         <div class="prep-step"><span class="n">3</span><b>Join the <dfn data-g="negation">negation</dfn></b><p>not / no / never + the next real word, skipping intensifiers like <i>very</i>. Otherwise "good" is counted in complaints.</p><code>food · not good</code></div>
         <div class="prep-step key"><span class="n">4</span><b>Count and score</b><p>Per source: sentences with the term in praise and in complaints. Then <dfn data-g="derived">derive</dfn> share, tone and the 7-sentence filter.</p><code>(praise + 5) ÷ (count + 10)</code></div>
       </div>
-      <table class="table compact prep-table">
-        <thead><tr><th>Praise / complaint</th><th>Smoothed share</th><th>Tone</th><th>Why it matters</th></tr></thead>
-        <tbody>
-          <tr><td>64 / 0 · great</td><td>93%</td><td class="praise">green</td><td>≥ 70%: clearly praise</td></tr>
-          <tr><td>59 / 61 · food</td><td>49%</td><td class="muted">grey</td><td>Used both ways: a topic, not a judgement</td></tr>
-          <tr><td>6 / 0 → 7 / 0</td><td>69% → 71%</td><td class="praise">grey → green</td><td>7 sentences is the fewest that can reach a colour, so it is our filter</td></tr>
-        </tbody>
-      </table>
+      <div class="pcalc" id="pcalc">
+        <div class="pcalc-left">
+          <p class="pcalc-title">Smoothed share · try it</p>
+          <p class="pcalc-formula">share = (praise + 5) ÷ (praise + complaint + 10)</p>
+          <div class="pcalc-row">
+            <label>praise sentences <input type="number" id="pc-praise" min="0" value="64"></label>
+            <label>complaint sentences <input type="number" id="pc-complaint" min="0" value="0"></label>
+          </div>
+          <div class="pcalc-examples">
+            <button type="button" data-p="64" data-c="0">64 / 0 · great</button>
+            <button type="button" data-p="59" data-c="61">59 / 61 · food</button>
+            <button type="button" data-p="6" data-c="0">6 / 0</button>
+            <button type="button" data-p="7" data-c="0">7 / 0</button>
+            <button type="button" data-p="0" data-c="16">0 / 16 · minutes</button>
+          </div>
+        </div>
+        <div class="pcalc-out"><span id="pc-share">—</span><span class="pchip" id="pc-tone">—</span><p id="pc-note"></p></div>
+      </div>
       <details class="wordlist"><summary>Full lists · 113 stop words · 9 skip words</summary>
         <div class="wordlist-body">
           <dl><dt>Articles and determiners <span>7</span></dt><dd>a · an · the · this · that · these · those</dd><dt>Pronouns <span>30</span></dt><dd>i · me · my · mine · we · us · our · ours · you · your · yours · he · him · his · she · her · hers · it · its · they · them · their · theirs · myself · yourself · himself · herself · itself · ourselves · themselves</dd><dt>Question words <span>9</span></dt><dd>who · whom · whose · which · what · where · when · why · how</dd><dt>be · have · do <span>16</span></dt><dd>am · is · are · was · were · be · been · being · have · has · had · having · do · does · did · doing</dd><dt>Modal verbs <span>9</span></dt><dd>will · would · shall · should · can · could · may · might · must</dd><dt>Prepositions <span>25</span></dt><dd>of · in · on · at · by · for · with · about · against · between · into · through · during · before · after · above · below · to · from · up · down · out · off · over · under</dd><dt>Conjunctions <span>15</span></dt><dd>and · or · but · nor · so · yet · if · then · than · because · as · while · until · although · though</dd><dt>Place <span>2</span></dt><dd>there · here</dd><dt class="skip">Skip words <span>9</span></dt><dd>very · really · too · quite · all · even · ever · much · more <i>— only after not / no / never</i></dd></dl>
@@ -160,7 +170,8 @@
     <section class="slide" data-menu="3">
       <p class="label">3 · Our design</p>
       <h2>Size and Layout</h2>
-      <table class="table">
+      <div class="layout-split">
+        <table class="table">
         <thead><tr><th>Channel</th><th>Encodes</th><th>Because</th></tr></thead>
         <tbody>
           <tr><td>Mark</td><td>A term, drawn as text</td><td>The reader needs the word itself</td></tr>
@@ -169,6 +180,11 @@
           <tr><td>Position</td><td>Nothing: the largest word first at the centre, the rest <dfn data-g="spiral">spiral</dfn> out until they fit</td><td>The most <dfn data-g="effectiveness">effective</dfn> channel is still free. Task 2 uses it</td></tr>
         </tbody>
       </table>
+        <figure class="spiral-fig">
+          <svg viewBox="0 0 360 220" role="img" aria-label="An Archimedean spiral starting from a target point" id="spiral-pres"></svg>
+          <figcaption>The path a word follows from the target point (dot) until its box overlaps nothing. Base: every word starts at the centre. Task 2: the start moves towards the sources that use it.</figcaption>
+        </figure>
+      </div>
       <aside class="notes">What / why / how: the data is a derived table of terms; the task is to discover and compare which words lean which way; the how is these channels plus a tooltip for details on demand.</aside>
     </section>
 

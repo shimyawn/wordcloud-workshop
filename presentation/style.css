@@ -447,3 +447,25 @@ details.wordlist p { margin: 12px 0 0; color: var(--muted); font-size: 14px !imp
 .search-shot figcaption { margin-top: 6px; color: var(--muted); font: 12px var(--mono); }
 .wc-text { display: flex; flex-direction: column; gap: 22px; }
 .wc-text .note { margin-top: 0; }
+
+.pcalc { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; margin-top: 20px; max-width: 1400px; padding: 20px 26px; border: 1px solid var(--rule); border-radius: 8px; background: rgba(255,255,255,0.02); }
+.pcalc-title { margin: 0; color: var(--muted); font: 500 12px var(--mono) !important; letter-spacing: 0.08em; text-transform: uppercase; }
+.pcalc-formula { margin: 10px 0 14px; padding: 10px 14px; border-radius: 6px; background: #000; color: var(--ink); font: 500 clamp(15px, 1.2vw, 20px) var(--mono) !important; display: inline-block; }
+.pcalc-row { display: flex; gap: 20px; flex-wrap: wrap; }
+.pcalc-row label { display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 14px; }
+.pcalc-row input { width: 150px; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 6px; background: #0b0c10; color: var(--ink); font: 500 20px var(--mono); }
+.pcalc-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.pcalc-examples button { padding: 6px 12px; border: 1px solid var(--rule); border-radius: 6px; background: transparent; color: var(--ink); font: 13px var(--mono); cursor: pointer; }
+.pcalc-examples button:hover { border-color: var(--muted); }
+.pcalc-out { display: grid; justify-items: start; gap: 8px; min-width: 230px; }
+#pc-share { font: 700 clamp(44px, 4vw, 64px) var(--sans, Inter); line-height: 1; color: var(--ink); }
+.pchip { padding: 4px 12px; border-radius: 999px; font: 500 14px var(--mono); background: #2a2b35; color: var(--ink); }
+.pchip.praise { background: rgba(164,255,100,0.15); color: var(--praise); }
+.pchip.complaint { background: rgba(255,91,158,0.15); color: var(--complaint); }
+#pc-note { margin: 0; color: var(--muted); font: 13px var(--mono) !important; }
+
+.layout-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 30%); gap: 36px; align-items: center; }
+.layout-split .table { margin-top: 28px; }
+.spiral-fig { margin: 0; }
+.spiral-fig svg { display: block; width: 100%; height: auto; }
+.spiral-fig figcaption { margin-top: 10px; color: var(--muted); font-size: clamp(13px, 0.95vw, 15px); line-height: 1.45; }
