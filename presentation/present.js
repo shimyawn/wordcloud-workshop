@@ -264,7 +264,7 @@ document.querySelectorAll('dfn[data-g]').forEach(el => {
   el.addEventListener('blur', () => { glossTip.hidden = true; });
 });
 const glossary = document.getElementById('glossary');
-Object.values(GLOSSARY).sort((a, b) => a[0].localeCompare(b[0])).forEach(([term, def]) => {
+if (glossary) Object.values(GLOSSARY).sort((a, b) => a[0].localeCompare(b[0])).forEach(([term, def]) => {
   const div = document.createElement('div');
   const dt = document.createElement('b'); dt.textContent = term;
   const dd = document.createElement('p'); dd.textContent = def;
@@ -274,7 +274,7 @@ Object.values(GLOSSARY).sort((a, b) => a[0].localeCompare(b[0])).forEach(([term,
 
 // ---------------- Quiz ----------------
 const quiz = document.getElementById('quiz');
-QUIZ.forEach((item, n) => {
+if (quiz) QUIZ.forEach((item, n) => {
   const box = document.createElement('div'); box.className = 'q';
   const h = document.createElement('h3'); h.textContent = `${n + 1}. ${item.q}`;
   const opts = document.createElement('div'); opts.className = 'opts';
@@ -315,7 +315,6 @@ document.addEventListener('keydown', event => {
   if (k === 't') toggleTimer();
   if (k === 'r') { timerElapsed = 0; if (timerStart) timerStart = Date.now(); tick(); }
   if (k === 'f') { if (document.fullscreenElement) document.exitFullscreen?.(); else document.documentElement.requestFullscreen?.().catch(() => {}); }
-  if (k === 'g') show(slides.findIndex(s => s.classList.contains('glossary-slide')));
 });
 document.addEventListener('slidechange', () => {
   updateNotes();

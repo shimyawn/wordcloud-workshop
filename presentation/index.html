@@ -46,12 +46,12 @@
       <h2>Overview</h2>
       <ol class="agenda">
         <li><b>The method</b><span>What a word cloud encodes, and its blind spots</span></li>
-        <li><b>The data</b><span>3,000 labelled sentences · preprocessing: from a sentence to terms</span></li>
-        <li><b>Our design</b><span>Three tones · size and layout</span></li>
+        <li><b>The data</b><span>3,000 labelled sentences · selecting words · preprocessing</span></li>
+        <li><b>Our design</b><span>Three tones · size and layout · our word cloud</span></li>
         <li><b>The code</b><span>Build in 6 steps · the key D3 pieces</span></li>
         <li><b>Task 1</b><span>Top-N filtering</span></li>
         <li><b>Task 2</b><span>Source as position</span></li>
-        <li><b>Wrap-up</b><span>Check &amp; submit · quiz · glossary</span></li>
+        <li><b>Wrap-up</b><span>Summary · check &amp; submit</span></li>
       </ol>
       <div class="facts-row">
         <div><span>Files</span>data/ · index.html · style.css · wordcloud.js</div>
@@ -71,17 +71,6 @@
       </div>
       <p class="note">Our cloud prints how many words it leaves out and gives exact counts on hover. Task 2 gives position a job.</p>
       <aside class="notes">Keep this to a minute. The vocabulary (mark, channel) is what matters for the rest of the session.</aside>
-    </section>
-
-    <section class="slide demo" data-menu="1">
-      <div class="demo-head">
-        <div>
-          <p class="label">1 · The method</p>
-          <h2>Our Word Cloud</h2>
-        </div>
-      </div>
-      <div class="frame tall"><iframe data-src="../Wordcloud_clean/index.html" title="Our word cloud"></iframe></div>
-      <aside class="notes">Hover minutes: 0 praise, 16 complaints. Hover food: 59 / 61, grey. Ask: which words do the three sources share? Hard to tell across three clouds; that is Task 2.</aside>
     </section>
 
     <!-- ===================== 2 · THE DATA ===================== -->
@@ -178,6 +167,17 @@
         </tbody>
       </table>
       <aside class="notes">What / why / how: the data is a derived table of terms; the task is to discover and compare which words lean which way; the how is these channels plus a tooltip for details on demand.</aside>
+    </section>
+
+    <section class="slide demo" data-menu="3">
+      <div class="demo-head">
+        <div>
+          <p class="label">3 · Our design</p>
+          <h2>Our Word Cloud</h2>
+        </div>
+      </div>
+      <div class="frame tall"><iframe data-src="../Wordcloud_clean/index.html" title="Our word cloud"></iframe></div>
+      <aside class="notes">Hover minutes: 0 praise, 16 complaints. Hover food: 59 / 61, grey. Ask: which words do the three sources share? Hard to tell across three clouds; that is Task 2.</aside>
     </section>
 
     <!-- ===================== 4 · THE CODE ===================== -->
@@ -467,20 +467,6 @@ for (let k = 0; !spot; k++) {
           </ul></div>
       </div>
       <aside class="notes">It does not need to be perfect; it should show the effort.</aside>
-    </section>
-
-    <section class="slide" data-menu="7">
-      <p class="label">7 · Wrap-up · Quiz</p>
-      <h2>Quiz</h2>
-      <div class="quiz" id="quiz"></div>
-      <aside class="notes">Let them call out answers before you click.</aside>
-    </section>
-
-    <section class="slide glossary-slide" data-menu="7">
-      <p class="label">7 · Wrap-up · Glossary</p>
-      <h2>Glossary</h2>
-      <div class="glossary" id="glossary"></div>
-      <aside class="notes">Press G on any slide to jump here. Dotted words on the slides show the definition on hover.</aside>
     </section>
 
     <section class="slide closing" data-menu="7">
