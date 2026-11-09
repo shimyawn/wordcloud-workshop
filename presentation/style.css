@@ -418,3 +418,13 @@ pre.code.snippet { white-space: pre-wrap; }
 .nav { zoom: var(--k, 1); }
 .deck { top: calc(var(--nav) * var(--k, 1)); }
 .step-slide, .stepcards-slide, .piece-slide { justify-content: center; }
+
+details.wordlist { position: relative; margin: 14px 0 0; align-self: flex-start; }
+details.wordlist summary { color: var(--muted); font: 500 13px var(--mono); cursor: pointer; }
+details.wordlist .wordlist-body { position: absolute; left: 0; bottom: calc(100% + 8px); width: min(1100px, 86vw); max-height: 70vh; overflow: auto; padding: 18px 22px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); box-shadow: 0 12px 40px rgba(0,0,0,0.5); z-index: 5; }
+details.wordlist dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0; }
+details.wordlist dt { color: var(--ink); font-size: 15px; white-space: nowrap; }
+details.wordlist dt span { color: var(--muted); font: 12px var(--mono); }
+details.wordlist dt.skip { color: var(--praise); }
+details.wordlist dd { margin: 0; color: #cfced8; font: 14px/1.55 var(--mono); }
+details.wordlist p { margin: 12px 0 0; color: var(--muted); font-size: 14px !important; }

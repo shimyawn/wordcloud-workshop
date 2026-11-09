@@ -184,3 +184,9 @@ pre.raw .tab { margin: 0 8px; color: var(--praise-text); }
 .w-cloud { fill: none; stroke: #cfcec7; stroke-dasharray: 4 4; }
 .w-spiral { fill: none; stroke: #b9b8b0; stroke-width: 1.2; }
 @media (max-width: 900px) { .brief { grid-template-columns: 1fr; } }
+
+.wordlist h4 { margin: 16px 0 6px; font: 500 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.wordlist dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; font-size: 14px; }
+.wordlist dt { font-weight: 500; white-space: nowrap; }
+.wordlist dt span { color: var(--muted); font: 12px var(--mono); }
+.wordlist dd { margin: 0; font: 13px/1.6 var(--mono); color: #33333a; }

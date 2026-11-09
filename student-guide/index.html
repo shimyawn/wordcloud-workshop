@@ -112,15 +112,28 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
       <ul lang="en">
         <li><b>Tokenization</b>: lowercase, split contractions (<em>isn't</em> → <em>is not</em>; careful with <em>can't</em> and <em>won't</em>), keep letters only.</li>
         <li><b>Stop words</b>: a written-out list of grammar words (<em>the, of, is, they</em>) that are dropped.</li>
-        <li><b>Negation</b>: <em>not</em>, <em>no</em> and <em>never</em> join the next real word into one term; <em>very</em> in between is skipped.</li>
+        <li><b>Negation</b>: <em>not</em>, <em>no</em> and <em>never</em> join the next real word into one term; intensifiers such as <em>very</em> in between are skipped.</li>
         <li><b>Count sentences, not words</b>: a term counts once per sentence, because the label belongs to the sentence.</li>
       </ul>
       <ul lang="zh">
         <li><b>分词（tokenization）</b>：转小写，拆开缩写（<em>isn't</em> → <em>is not</em>；注意 <em>can't</em> 和 <em>won't</em>），只保留字母。</li>
         <li><b>停用词（stop words）</b>：一份写明的语法词列表（<em>the, of, is, they</em>），统计前删除。</li>
-        <li><b>否定处理</b>：<em>not</em>、<em>no</em>、<em>never</em> 与后面第一个实词合成一个词项；中间的 <em>very</em> 跳过。</li>
+        <li><b>否定处理</b>：<em>not</em>、<em>no</em>、<em>never</em> 与后面第一个实词合成一个词项；中间的 <em>very</em> 等强调词跳过。</li>
         <li><b>按句计数</b>：一个词项在一句话里只算一次，因为标签属于整句。</li>
       </ul>
+
+      <details class="wordlist"><summary><span lang="en">Our lists: 113 stop words and 9 skip words</span><span lang="zh">我们的列表：113 个停用词和 9 个跳过词</span></summary>
+        <p lang="en">Which words to drop is a judgement call, so we write ours out. Change them if you disagree, and say so in your submission.</p>
+        <p lang="zh">删除哪些词是一种判断，所以我们把列表写明。如果你不同意可以修改，并在提交时说明。</p>
+        <h4 lang="en">Stop words (function words) · dropped everywhere</h4><h4 lang="zh">停用词（功能词）· 全部删除</h4>
+        <dl lang="en"><dt>Articles and determiners <span>7</span></dt><dd>a · an · the · this · that · these · those</dd><dt>Pronouns <span>30</span></dt><dd>i · me · my · mine · we · us · our · ours · you · your · yours · he · him · his · she · her · hers · it · its · they · them · their · theirs · myself · yourself · himself · herself · itself · ourselves · themselves</dd><dt>Question words <span>9</span></dt><dd>who · whom · whose · which · what · where · when · why · how</dd><dt>be · have · do <span>16</span></dt><dd>am · is · are · was · were · be · been · being · have · has · had · having · do · does · did · doing</dd><dt>Modal verbs <span>9</span></dt><dd>will · would · shall · should · can · could · may · might · must</dd><dt>Prepositions <span>25</span></dt><dd>of · in · on · at · by · for · with · about · against · between · into · through · during · before · after · above · below · to · from · up · down · out · off · over · under</dd><dt>Conjunctions <span>15</span></dt><dd>and · or · but · nor · so · yet · if · then · than · because · as · while · until · although · though</dd><dt>Place <span>2</span></dt><dd>there · here</dd></dl><dl lang="zh"><dt>冠词与限定词 <span>7</span></dt><dd>a · an · the · this · that · these · those</dd><dt>代词 <span>30</span></dt><dd>i · me · my · mine · we · us · our · ours · you · your · yours · he · him · his · she · her · hers · it · its · they · them · their · theirs · myself · yourself · himself · herself · itself · ourselves · themselves</dd><dt>疑问词 <span>9</span></dt><dd>who · whom · whose · which · what · where · when · why · how</dd><dt>be · have · do <span>16</span></dt><dd>am · is · are · was · were · be · been · being · have · has · had · having · do · does · did · doing</dd><dt>情态动词 <span>9</span></dt><dd>will · would · shall · should · can · could · may · might · must</dd><dt>介词 <span>25</span></dt><dd>of · in · on · at · by · for · with · about · against · between · into · through · during · before · after · above · below · to · from · up · down · out · off · over · under</dd><dt>连词 <span>15</span></dt><dd>and · or · but · nor · so · yet · if · then · than · because · as · while · until · although · though</dd><dt>地点 <span>2</span></dt><dd>there · here</dd></dl>
+        <p lang="en">Kept on purpose: <em>not, no, never</em> (they join the next word) and every word that can carry a judgement, such as <em>good</em> or <em>bad</em>. Single letters are dropped by a length rule, not the list.</p>
+        <p lang="zh">特意保留：<em>not、no、never</em>（与后面的词合并），以及所有可能带有评价的词，如 <em>good</em>、<em>bad</em>。单个字母由长度规则删除，不在列表中。</p>
+        <h4 lang="en">Skip words · only after a negator</h4><h4 lang="zh">跳过词 · 只在否定词之后</h4>
+        <dl><dt>Intensifiers <span>9</span></dt><dd>very · really · too · quite · all · even · ever · much · more</dd></dl>
+        <p lang="en">After <em>not / no / never</em>, the code looks past up to two stop words or skip words to find the word to join: <em>isn't very good</em> → <em>not good</em>. Anywhere else, skip words stay as ordinary terms.</p>
+        <p lang="zh">在 <em>not / no / never</em> 之后，代码最多越过两个停用词或跳过词，找到要合并的词：<em>isn't very good</em> → <em>not good</em>。在其他位置，跳过词仍是普通词项。</p>
+      </details>
 
       <h3 lang="en">Smoothed share of praise</h3><h3 lang="zh">平滑后的称赞比例</h3>
       <p class="formula">share = (praise + 5) ÷ (praise + complaint + 10)</p>

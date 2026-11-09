@@ -115,7 +115,7 @@
       <div class="prep">
         <div class="prep-step"><span class="n">1</span><b>Tokenize</b><p>Lowercase, split contractions, keep letters.</p><code>the · food · is · not · very · good</code></div>
         <div class="prep-step"><span class="n">2</span><b>Remove <dfn data-g="stopwords">stop words</dfn></b><p>About 110 grammar words. Without this, the biggest words would be <i>the</i> (1,334 sentences), <i>and</i>, <i>i</i>, <i>a</i>.</p><code>food · not · very · good</code></div>
-        <div class="prep-step"><span class="n">3</span><b>Join the <dfn data-g="negation">negation</dfn></b><p>not / no / never + the next real word, skipping <i>very</i>. Otherwise "good" is counted in complaints.</p><code>food · not good</code></div>
+        <div class="prep-step"><span class="n">3</span><b>Join the <dfn data-g="negation">negation</dfn></b><p>not / no / never + the next real word, skipping intensifiers like <i>very</i>. Otherwise "good" is counted in complaints.</p><code>food · not good</code></div>
         <div class="prep-step key"><span class="n">4</span><b>Count and score</b><p>Per source: sentences with the term in praise and in complaints. Then <dfn data-g="derived">derive</dfn> share, tone and the 7-sentence filter.</p><code>(praise + 5) ÷ (count + 10)</code></div>
       </div>
       <table class="table compact prep-table">
@@ -126,6 +126,12 @@
           <tr><td>6 / 0 → 7 / 0</td><td>69% → 71%</td><td class="praise">grey → green</td><td>7 sentences is the fewest that can reach a colour, so it is our filter</td></tr>
         </tbody>
       </table>
+      <details class="wordlist"><summary>Full lists · 113 stop words · 9 skip words</summary>
+        <div class="wordlist-body">
+          <dl><dt>Articles and determiners <span>7</span></dt><dd>a · an · the · this · that · these · those</dd><dt>Pronouns <span>30</span></dt><dd>i · me · my · mine · we · us · our · ours · you · your · yours · he · him · his · she · her · hers · it · its · they · them · their · theirs · myself · yourself · himself · herself · itself · ourselves · themselves</dd><dt>Question words <span>9</span></dt><dd>who · whom · whose · which · what · where · when · why · how</dd><dt>be · have · do <span>16</span></dt><dd>am · is · are · was · were · be · been · being · have · has · had · having · do · does · did · doing</dd><dt>Modal verbs <span>9</span></dt><dd>will · would · shall · should · can · could · may · might · must</dd><dt>Prepositions <span>25</span></dt><dd>of · in · on · at · by · for · with · about · against · between · into · through · during · before · after · above · below · to · from · up · down · out · off · over · under</dd><dt>Conjunctions <span>15</span></dt><dd>and · or · but · nor · so · yet · if · then · than · because · as · while · until · although · though</dd><dt>Place <span>2</span></dt><dd>there · here</dd><dt class="skip">Skip words <span>9</span></dt><dd>very · really · too · quite · all · even · ever · much · more <i>— only after not / no / never</i></dd></dl>
+          <p>Kept on purpose: <i>not, no, never</i> and any word that can carry a judgement. A judgement call: change the list if you disagree.</p>
+        </div>
+      </details>
       <aside class="notes">This is the slide to slow down on. Steps 2 and 3 of the code are exactly these moves. Additive smoothing: five imaginary sentences on each side stop a word seen three times from jumping to 100%.</aside>
     </section>
 
