@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1794213364">
+  <link rel="stylesheet" href="style.css?v=1794213741">
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="present.js?v=1794213364" defer></script>
+  <script src="present.js?v=1794213741" defer></script>
 </head>
 <body>
   <nav class="nav" aria-label="Sections">
@@ -81,6 +81,7 @@
     <section class="slide" data-menu="2">
       <p class="label">2 · The data</p>
       <h2>Dataset: Three Labelled Sources</h2>
+      <p class="data-origin"><b>Sentiment Labelled Sentences</b> · Kotzias et al., KDD 2015 · UCI ML Repository. Real review sentences, made for sentiment research, kept only if clearly positive or negative.</p>
       <div class="sources">
         <div class="src"><span class="site">Yelp</span><b>Dining</b><p>restaurant reviews</p><p class="n">1,000 sentences · 500 praise · 500 complaints</p><code>Crust is not good. ⇥ 0</code></div>
         <div class="src"><span class="site">IMDb</span><b>Film</b><p>movie reviews</p><p class="n">1,000 sentences · 500 praise · 500 complaints</p><code>A very, very, very slow-moving, aimless movie about a distressed, drifting young man. ⇥ 0</code></div>
@@ -91,7 +92,6 @@
           <tbody>
             <tr><td><dfn data-g="item">Item</dfn></td><td>One sentence taken from a review, in a file per site: the sentence, a tab, then its label</td></tr>
             <tr><td><dfn data-g="attribute">Attributes</dfn></td><td>Text · label: 1 = positive (praise), 0 = negative (complaint) · source: which site (<dfn data-g="categorical">categorical</dfn>)</td></tr>
-            <tr><td>By design</td><td>Each site is balanced 500 : 500, so 50% means "used equally in both"</td></tr>
           </tbody>
         </table>
         <div class="side">
@@ -99,8 +99,8 @@
           <p class="stat"><span class="big">58%</span> of the 5,069 distinct words appear in one sentence only: a <dfn data-g="longtail">long tail</dfn>.</p>
         </div>
       </div>
-      <p class="our-question"><span>Our question · </span>Across dining, film and tech reviews, which words do people use when they praise, and which when they complain?</p>
-      <aside class="notes">The dataset was built to test whether a sentiment model trained on one kind of review works on another. That is why it comes as three separate, labelled sets, and why we draw one cloud per site.</aside>
+      <p class="our-question"><span>Our question<i class="sep"> · </i></span>Across dining, film and tech reviews, which words do people use when they praise, and which when they complain?</p>
+      <aside class="notes">The dataset was made for a 2015 KDD paper, "From Group to Individual Labels Using Deep Features": learning sentence-level sentiment from review-level labels. Neutral sentences were left out on purpose, so every sentence leans one way. It comes as three labelled sets, one per site, which is why we draw one cloud per site.</aside>
     </section>
 
     <section class="slide" data-menu="2">

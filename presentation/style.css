@@ -492,5 +492,12 @@ details.wordlist p { margin: 12px 0 0; color: var(--muted); font-size: 14px !imp
 
 .menu button { padding-left: clamp(6px, 0.7vw, 12px); padding-right: clamp(6px, 0.7vw, 12px); }
 
-.our-question { margin: 22px 0 0; padding: 14px 20px; border-left: 3px solid var(--praise); background: rgba(164,255,100,0.06); border-radius: 0 6px 6px 0; max-width: 1400px; color: var(--ink); font-size: clamp(16px, 1.35vw, 22px) !important; font-weight: 600; line-height: 1.4; }
-.our-question span { display: block; margin-bottom: 4px; white-space: pre; color: var(--praise); font: 500 12px var(--mono) !important; letter-spacing: 0.08em; text-transform: uppercase; }
+.our-question { margin: 14px 0 0; padding: 10px 18px; border-left: 3px solid var(--praise); background: rgba(164,255,100,0.06); border-radius: 0 6px 6px 0; max-width: 1400px; color: var(--ink); font-size: clamp(16px, 1.15vw, 20px) !important; font-weight: 600; line-height: 1.35; }
+.our-question span { display: block; margin-bottom: 4px; color: var(--praise); font: 500 12px var(--mono) !important; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.data-origin { margin: 2px 0 10px; max-width: 1400px; color: var(--muted); font-size: clamp(13px, 1vw, 16px) !important; line-height: 1.45; }
+.data-origin b { color: var(--ink); font-weight: 600; }
+.our-question .sep { display: none; }
+.data-split .side .stat { margin: 0 0 0.6em; }
+.data-split .side .stat .big { line-height: 1.05; }
+.data-split { margin-top: 6px; }
