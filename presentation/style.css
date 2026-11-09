@@ -489,3 +489,5 @@ details.wordlist p { margin: 12px 0 0; color: var(--muted); font-size: 14px !imp
 .demo-note { margin: 0; max-width: 640px; color: #cfced8; font-size: clamp(13px, 1vw, 16px) !important; line-height: 1.5; }
 .agenda li.ag-bonus { counter-increment: none; }
 .agenda li.ag-bonus::before { content: '+'; }
+
+.menu button { padding-left: clamp(6px, 0.7vw, 12px); padding-right: clamp(6px, 0.7vw, 12px); }

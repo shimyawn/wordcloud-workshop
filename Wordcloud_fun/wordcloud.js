@@ -117,10 +117,10 @@ function selectTerms(terms) {
 // and walking out along a spiral until its box overlaps nothing. No randomness.
 const measure = document.createElement('canvas').getContext('2d');
 
-function layoutCloud(terms, bandIndex, size, width, bandHeight) {
-  const top = bandIndex * bandHeight + CONFIG.bandPad.top;
-  const bottom = (bandIndex + 1) * bandHeight - CONFIG.bandPad.bottom;
-  const centre = { x: width / 2, y: (top + bottom) / 2 };
+function layoutCloud(terms, bandIndex, size, box) {                 // box = { x, y, w, h }: where this cloud may go
+  const top = box.y + CONFIG.bandPad.top;
+  const bottom = box.y + box.h - CONFIG.bandPad.bottom;
+  const centre = { x: box.x + box.w / 2, y: (top + bottom) / 2 };
   const { step, gap, squash } = CONFIG.spiral;
   const placed = [];
   let unplaced = 0;
@@ -145,7 +145,7 @@ function layoutCloud(terms, bandIndex, size, width, bandHeight) {
       const angle = k * step;
       const x = target + gap * angle * Math.cos(angle) * squash;
       const y = centre.y + gap * angle * Math.sin(angle);
-      if (x - w / 2 < 4 || x + w / 2 > width - 4 || y - h / 2 < top || y + h / 2 > bottom) continue;
+      if (x - w / 2 < box.x + 4 || x + w / 2 > box.x + box.w - 4 || y - h / 2 < top || y + h / 2 > bottom) continue;
       const near = cellsOf(x, y, w, h).flatMap(key => grid.get(key) || []);
       if (!near.some(p => Math.abs(p.x - x) < (p.w + w) / 2 && Math.abs(p.y - y) < (p.h + h) / 2)) spot = { x, y };
     }
@@ -161,8 +161,8 @@ function layoutCloud(terms, bandIndex, size, width, bandHeight) {
 
 
 // STEP 6 · Draw one cloud per source and its words; hover a word for its counts and one real sentence.
-function drawCloud({ bands, width, bandHeight }, animate) {
-  const height = bands.length * bandHeight;
+function drawCloud({ bands, width }, animate) {
+  const height = d3.max(bands, b => b.box.y + b.box.h);
   const svg = d3.select('#cloud').attr('width', width).attr('height', height);
 
   const g = svg.selectAll('g.band').data(bands).join(enter => {
@@ -170,10 +170,9 @@ function drawCloud({ bands, width, bandHeight }, animate) {
     b.append('line'); b.append('text').attr('class', 'band-name'); b.append('text').attr('class', 'band-note');
     return b;
   });
-  g.select('line').attr('x2', width).attr('y1', (d, i) => i * bandHeight).attr('y2', (d, i) => i * bandHeight);
-  g.select('.band-name').attr('x', 8).attr('y', (d, i) => i * bandHeight + 22).text(d => d.source);
-  g.select('.band-note').attr('x', 8).attr('y', (d, i) => (i + 1) * bandHeight - 10)
-    .text(d => d.note);
+  g.select('line').attr('x1', d => d.box.x + 6).attr('x2', d => d.box.x + d.box.w - 6).attr('y1', d => d.box.y).attr('y2', d => d.box.y);
+  g.select('.band-name').attr('x', d => d.box.x + 8).attr('y', d => d.box.y + 22).text(d => d.source);
+  g.select('.band-note').attr('x', d => d.box.x + 8).attr('y', d => d.box.y + d.box.h - 10).text(d => d.note);
 
   const t = d3.transition().duration(animate ? 600 : 0);
   svg.selectAll('text.word')
@@ -254,18 +253,19 @@ async function main() {
       const zoom = stage.getBoundingClientRect().width / stage.offsetWidth || 1;   // 1 unless the page is zoomed
       const screenH = innerHeight / zoom;                                             // the visible height, in page pixels
       const visible = screenH - Math.min(stage.offsetTop, screenH * 0.3) - 16;
-      const fitted = Math.max(180, Math.min(560, Math.floor(visible / 2)));
-      const size = d3.scaleSqrt().domain([CONFIG.minCount, maxCount])
-        .range([CONFIG.fontRange[0], Math.round(CONFIG.fontRange[1] * Math.min(1.25 * fitted / CONFIG.bandHeight, width / 1000))]);
-      CONFIG.spiral.squash = Math.max(1.6, Math.min(2.6, width / fitted / 2.2));   // wide, short bands → a wider spiral, but not a flat strip
-      let bandHeight = fitted, bands;
-      for (let attempt = 0; attempt < 15; attempt++) {     // grow all bands together until every word fits
-        bands = selected.map((s, i) => ({ source: s.source, note: s.note, ...layoutCloud(s.kept, i, size, width, bandHeight) }));
+      // FUN · praise and complaint side by side, each box as tall as the screen allows
+      const boxW = width / 2, boxH = Math.max(320, Math.min(900, visible));
+      const boxes = selected.map((s, i) => ({ x: i * boxW, y: 0, w: boxW, h: boxH }));
+      CONFIG.spiral.squash = Math.max(0.9, Math.min(2.2, 1.4 * boxW / boxH));
+      let fontMax = Math.min(150, boxW / 4, boxH / 4), bands;
+      for (let attempt = 0; attempt < 25; attempt++) {     // start large, shrink until every word fits
+        const size = d3.scaleSqrt().domain([CONFIG.minCount, maxCount]).range([CONFIG.fontRange[0] + 2, Math.round(fontMax)]);
+        bands = selected.map((s, i) => ({ source: s.source, note: s.note, box: boxes[i], ...layoutCloud(s.kept, i, size, boxes[i]) }));
         if (bands.every(b => b.unplaced === 0)) break;
-        bandHeight += CONFIG.bandGrow;
+        fontMax *= 0.93;
       }
-      console.log('[Step 5] unplaced', bands.map(b => `${b.source} ${b.unplaced}`).join(' · '), `| band height ${bandHeight}px`);
-      drawCloud({ bands, width, bandHeight }, animate);
+      console.log('[Step 5] unplaced', bands.map(b => `${b.source} ${b.unplaced}`).join(' · '), `| largest font ${Math.round(fontMax)}px`);
+      drawCloud({ bands, width }, animate);
       console.log(`[Step 6] ${document.querySelectorAll('#cloud text.word').length} words drawn`);
     };
 
