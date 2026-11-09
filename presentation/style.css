@@ -437,3 +437,6 @@ details.wordlist p { margin: 12px 0 0; color: var(--muted); font-size: 14px !imp
 .why-grid figcaption { margin-top: 8px; font-size: clamp(13px, 1vw, 16px); line-height: 1.4; color: #cfced8; }
 .why-grid figcaption b { display: block; color: var(--ink); font-weight: 600; }
 .why-grid .w3 figcaption b { color: var(--praise); }
+
+.brand { display: inline-flex; align-items: center; gap: 10px; }
+.brand .logo { width: 30px; height: 30px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(255,255,255,0.15); flex: none; }

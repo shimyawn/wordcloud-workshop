@@ -240,7 +240,9 @@ async function main() {
     const render = animate => {
       const width = Math.max(720, document.getElementById('stage').clientWidth);
       const stage = document.getElementById('stage');                 // fit the cloud in one screen
-      const visible = innerHeight - Math.min(stage.offsetTop, innerHeight * 0.3) - 16;
+      const zoom = stage.getBoundingClientRect().width / stage.offsetWidth || 1;   // 1 unless the page is zoomed
+      const screenH = innerHeight / zoom;                                             // the visible height, in page pixels
+      const visible = screenH - Math.min(stage.offsetTop, screenH * 0.3) - 16;
       const fitted = Math.max(480, Math.min(CONFIG.cloudHeight, visible));
       const size = d3.scaleSqrt().domain([CONFIG.minCount, d3.max(kept, t => t.count)])
         .range([CONFIG.fontRange[0], Math.round(CONFIG.fontRange[1] * Math.min(1, fitted / CONFIG.cloudHeight * 1.1))]);

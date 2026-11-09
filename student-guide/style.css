@@ -197,3 +197,8 @@ pre.raw .tab { margin: 0 8px; color: var(--praise-text); }
 .why-pair figcaption { margin-top: 8px; color: #d8d7df; font-size: 13.5px; line-height: 1.45; }
 .why-pair figcaption b { color: #fff; }
 @media (max-width: 700px) { .why-pair { grid-template-columns: 1fr; } }
+
+.toc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.toc-head .lang-switch { margin-bottom: 0; }
+.toc-head .logo { width: 36px; height: 36px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px var(--rule); flex: none; }
+@media (max-width: 860px) { .toc-head { margin-bottom: 8px; } .toc-head .logo { width: 28px; height: 28px; } }

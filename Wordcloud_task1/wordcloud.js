@@ -226,7 +226,9 @@ async function main() {
       });
       const width = Math.max(600, document.getElementById('stage').clientWidth);
       const stage = document.getElementById('stage');
-      const visible = innerHeight - Math.min(stage.offsetTop, innerHeight * 0.3) - 16;
+      const zoom = stage.getBoundingClientRect().width / stage.offsetWidth || 1;   // 1 unless the page is zoomed
+      const screenH = innerHeight / zoom;                                             // the visible height, in page pixels
+      const visible = screenH - Math.min(stage.offsetTop, screenH * 0.3) - 16;
       // Layout follows N: 10 → three clouds side by side · 50, 100 → stacked in one screen · 1000 → one source per screen
       const mode = N <= 10 ? 'columns' : N >= 1000 ? 'pages' : 'rows';
       const boxH = mode === 'columns' ? Math.max(260, visible) : mode === 'pages' ? Math.max(320, visible) : Math.max(150, Math.floor(visible / 3));

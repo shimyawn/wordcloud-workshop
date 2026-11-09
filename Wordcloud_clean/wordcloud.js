@@ -228,11 +228,13 @@ async function main() {
       const width = Math.max(600, document.getElementById('stage').clientWidth);
       // Fit all three clouds in one screen: each band gets a third of the visible height, fonts scale with it.
       const stage = document.getElementById('stage');
-      const visible = innerHeight - Math.min(stage.offsetTop, innerHeight * 0.3) - 16;
+      const zoom = stage.getBoundingClientRect().width / stage.offsetWidth || 1;   // 1 unless the page is zoomed
+      const screenH = innerHeight / zoom;                                             // the visible height, in page pixels
+      const visible = screenH - Math.min(stage.offsetTop, screenH * 0.3) - 16;
       const fitted = Math.max(150, Math.min(420, Math.floor(visible / 3)));
       const size = d3.scaleSqrt().domain([CONFIG.minCount, maxCount])
-        .range([CONFIG.fontRange[0], Math.round(CONFIG.fontRange[1] * Math.min(fitted / CONFIG.bandHeight, width / 1100))]);
-      CONFIG.spiral.squash = Math.max(1.6, Math.min(4, width / fitted / 2.2));   // wide, short bands → a wider spiral
+        .range([CONFIG.fontRange[0], Math.round(CONFIG.fontRange[1] * Math.min(1.25 * fitted / CONFIG.bandHeight, width / 1000))]);
+      CONFIG.spiral.squash = Math.max(1.6, Math.min(2.6, width / fitted / 2.2));   // wide, short bands → a wider spiral, but not a flat strip
       let bandHeight = fitted, bands;
       for (let attempt = 0; attempt < 15; attempt++) {     // grow all bands together until every word fits
         bands = selected.map((s, i) => ({ source: s.source, leftOut: s.leftOut, ...layoutCloud(s.kept, i, size, width, bandHeight) }));
