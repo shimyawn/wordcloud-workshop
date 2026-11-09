@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Praise and complaints, in different words</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="wordcloud.js" defer></script>
+</head>
+<body>
+  <header class="intro">
+    <h1>Just for fun: praise words and complaint words</h1>
+    <p class="subtitle">3,000 review sentences · only words that lean one way · colour = where the word comes from</p>
+    <p class="legend-fun"><span style="color:#ffb347">■ Dining</span> <span style="color:#5cc8ff">■ Film</span> <span style="color:#c792ff">■ Tech</span> <span style="color:#fff">■ shared (no source has 80%)</span></p>
+    <p class="status" id="status">Reading 3,000 sentences…</p>
+  </header>
+
+  <main class="stage" id="stage">
+    <svg id="cloud" role="img" aria-label="Three word clouds of review words, coloured by whether each word appears mostly in praise or in complaint sentences"></svg>
+  </main>
+
+  <div class="tooltip" id="tooltip" hidden></div>
+
+  <footer class="how">
+    <h2>How to read</h2>
+    <p><strong>Two clouds:</strong> words used mostly in praise (70% or more, smoothed) and words used mostly in complaints (30% or less). Neutral words such as <em>food</em> or <em>phone</em> are hidden. <strong>Size</strong> is the number of sentences across all three sources. <strong>Colour</strong> is the source: if one source gives 80% or more of the word's sentences, its colour; otherwise white. Hover for the counts per source.</p>
+  </footer>
+</body>
+</html>

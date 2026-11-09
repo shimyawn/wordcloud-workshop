@@ -22,6 +22,7 @@
       <li><button data-menu="4">4 The code</button></li>
       <li><button data-menu="5">5 Task 1</button></li>
       <li><button data-menu="6">6 Task 2</button></li>
+      <li><button data-menu="b">Bonus</button></li>
       <li><button data-menu="7">7 Wrap-up</button></li>
     </ol>
     <span class="timer" id="timer" title="T: start or pause · R: reset">00:00</span>
@@ -51,6 +52,7 @@
         <li><b>The code</b><span>Build in 6 steps · the key D3 pieces</span></li>
         <li><b>Task 1</b><span>Top-N filtering</span></li>
         <li><b>Task 2</b><span>Source as position</span></li>
+        <li class="ag-bonus"><b>Bonus</b><span>A different goal, a different picture</span></li>
         <li><b>Wrap-up</b><span>Summary · check &amp; submit</span></li>
       </ol>
       <div class="facts-row">
@@ -392,7 +394,7 @@ for (let k = 0; !spot; k++) {
         </div>
         <div><h3>Where</h3><p>Step 4, main() and the note in step 6. Look for: <code>selectTerms</code>, <code>slice</code>, <code>band-note</code>, <code>domain(</code>.</p>
           <details class="hint-box"><summary>Hint</summary><p>Ties: count every term whose count equals the count of the N-th term. The ones after position N are cut off, only because of the alphabet.</p></details>
-          <details class="hint-box"><summary>Bonus</summary><p>Buttons for 10 / 50 / 100 / 1000 that redraw the clouds.</p></details>
+          <details class="hint-box"><summary>Extra</summary><p>Buttons for 10 / 50 / 100 / 1000 that redraw the clouds.</p></details>
         </div>
       </div>
       <p class="check">Checkpoint · Dining: top 10 ends at 38 sentences · top 100 ends at 9 sentences, 14 terms share it, 9 cut off · top 1000 ends at 1 sentence, 1,227 terms share it, 1,002 cut off.</p>
@@ -432,7 +434,7 @@ for (let k = 0; !spot; k++) {
         </div>
         <div><h3>Where</h3><p>CONFIG, a merge after step 3, the target in step 5, the bands in step 6. Look for: <code>bySource</code>, <code>target</code>, <code>g.band</code>.</p>
           <details class="hint-box"><summary>Hint</summary><p>target = (Dining × count in Dining + Tech × count in Tech + Film × count in Film) ÷ total count, for x and for y.</p></details>
-          <details class="hint-box"><summary>Bonus</summary><p>Show the counts per source in the tooltip, so "good" reads Dining 78 · Film 48 · Tech 67.</p></details>
+          <details class="hint-box"><summary>Extra</summary><p>Show the counts per source in the tooltip, so "good" reads Dining 78 · Film 48 · Tech 67.</p></details>
         </div>
       </div>
       <p class="check">Checkpoint · 356 terms in one cloud, 0 unplaced · good and great near the middle, food top left, phone top right, movie at the bottom.</p>
@@ -449,18 +451,21 @@ for (let k = 0; !spot; k++) {
     <section class="slide" data-menu="6">
       <p class="label">6 · Task 2</p>
       <h2>Discussion</h2>
-      <div class="disc-split">
-        <ul class="points questions">
-          <li>Which kind of word sits in the middle, and which in the corners?</li>
-          <li>Find a praise or complaint word that stays in one corner. Why there?</li>
-          <li>What does one cloud show that three separate clouds did not?</li>
-        </ul>
-        <figure class="bonus">
-          <img src="img/alt_tone_source.png" alt="Bonus design: a praise cloud and a complaint cloud, coloured by source">
-          <figcaption><b>Bonus · if you have time</b> · Different goal, different picture. To train a classifier that tells praise from complaint, neutral words do not help: split praise and complaint, hide the neutral words, colour = source (<span style="color:#ffb347">Dining</span> · <span style="color:#5cc8ff">Film</span> · <span style="color:#c792ff">Tech</span> · white = shared). White words work in every domain; coloured words only in one.</figcaption>
-        </figure>
+      <ul class="points questions">
+        <li>Which kind of word sits in the middle, and which in the corners?</li>
+        <li>Find a praise or complaint word that stays in one corner. Why there?</li>
+        <li>What does one cloud show that three separate clouds did not?</li>
+      </ul>
+      <aside class="notes">Judgement words travel; topic words stay home. This is the main finding of the dataset, now visible in one view.</aside>
+    </section>
+
+    <section class="slide demo" data-menu="b">
+      <div class="demo-head">
+        <div><p class="label">Bonus · if you have time</p><h2>Bonus · A Different Goal</h2></div>
+        <p class="demo-note">If the goal is a classifier that tells praise from complaint, neutral words do not help: two clouds, neutral words hidden, colour = source, white = shared.</p>
       </div>
-      <aside class="notes">Bonus: same data, a new question. White = no source gives 80% of the sentences. For a real classifier a ranked bar chart of how strongly each word leans would be more exact; this is the readable version. Judgement words travel; topic words stay home. This is the main finding of the dataset, now visible in one view.</aside>
+      <div class="frame tall"><iframe data-src="../Wordcloud_fun/index.html" title="Bonus demo"></iframe></div>
+      <aside class="notes">Same data, same rules (smoothing, 70 / 30, 7 sentences), a new question. White = no source gives 80% of the word's sentences. White words work in every domain; coloured words only in one. For a real classifier a ranked bar chart of how strongly each word leans would be more exact; this is the readable version.</aside>
     </section>
 
     <!-- ===================== 7 · WRAP-UP ===================== -->

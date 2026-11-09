@@ -37,6 +37,7 @@
       </li>
       <li><a href="#task1"><input type="checkbox" data-progress="t1" aria-label="Task 1 done"> <span lang="en">5 · Task 1</span><span lang="zh">5 · 任务 1</span></a></li>
       <li><a href="#task2"><input type="checkbox" data-progress="t2" aria-label="Task 2 done"> <span lang="en">6 · Task 2</span><span lang="zh">6 · 任务 2</span></a></li>
+      <li><a href="#bonus"><span lang="en">+ · Bonus</span><span lang="zh">+ · 加分任务</span></a></li>
       <li><a href="#submit"><span lang="en">7 · Wrap-up</span><span lang="zh">7 · 总结</span></a></li>
     </ol>
   </aside>
@@ -294,7 +295,7 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
           <p>Step 4 · main() · step 6 note</p><p class="look"><span>Look for</span> selectTerms · slice · band-note · domain(</p></div>
       </div>
       <details class="hint-box"><summary lang="en">Hint</summary><summary lang="zh">提示</summary><p lang="en">Ties: count every term whose count equals the count of the N-th term. The ones after position N are cut off only because of the alphabet.</p><p lang="zh">并列：数一数有多少词项的句数等于第 N 名。排在第 N 名之后的那些，只是因为字母顺序被截掉了。</p></details>
-      <details class="hint-box"><summary lang="en">Bonus</summary><summary lang="zh">加分</summary><p lang="en">Buttons for 10 / 50 / 100 / 1000 that redraw the clouds.</p><p lang="zh">加 10 / 50 / 100 / 1000 按钮，点击后重画词云。</p></details>
+      <details class="hint-box"><summary lang="en">Extra</summary><summary lang="zh">额外</summary><p lang="en">Buttons for 10 / 50 / 100 / 1000 that redraw the clouds.</p><p lang="zh">加 10 / 50 / 100 / 1000 按钮，点击后重画词云。</p></details>
       <figure class="wire" aria-label="Layout sketch: four buttons above three empty cloud areas">
         <svg viewBox="0 0 720 230" role="img">
           <text x="0" y="17" class="w-label">Top N</text>
@@ -328,7 +329,7 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
           <p>CONFIG · after step 3 · step 5 · step 6</p><p class="look"><span>Look for</span> bySource · target · g.band</p></div>
       </div>
       <details class="hint-box"><summary lang="en">Hint</summary><summary lang="zh">提示</summary><p lang="en">target = (Dining corner × count in Dining + Tech corner × count in Tech + Film corner × count in Film) ÷ total count, for x and for y.</p><p lang="zh">目标 =（Dining 角 × Dining 句数 + Tech 角 × Tech 句数 + Film 角 × Film 句数）÷ 总句数，x 和 y 分别计算。</p></details>
-      <details class="hint-box"><summary lang="en">Bonus</summary><summary lang="zh">加分</summary><p lang="en">Show the counts per source in the tooltip.</p><p lang="zh">在提示框里显示每个来源的句数。</p></details>
+      <details class="hint-box"><summary lang="en">Extra</summary><summary lang="zh">额外</summary><p lang="en">Show the counts per source in the tooltip.</p><p lang="zh">在提示框里显示每个来源的句数。</p></details>
       <figure class="wire" aria-label="Layout sketch: an upside-down triangle with Dining top left, Tech top right and Film at the bottom">
         <svg viewBox="0 0 720 260" role="img">
           <path d="M120,40 L600,40 L360,230 Z" class="w-cloud"/>
@@ -340,7 +341,12 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
       <h3 lang="en">Talk about it</h3><h3 lang="zh">讨论</h3>
       <ul class="questions" lang="en"><li>Which kind of word sits in the middle, and which in the corners?</li><li>Find a praise or complaint word that stays in one corner. Why there?</li><li>What does one cloud show that three separate clouds did not?</li></ul>
       <ul class="questions" lang="zh"><li>什么样的词在中间？什么样的词在角上？</li><li>找一个停留在某个角上的称赞或抱怨词。为什么在那里？</li><li>一个词云能显示哪些三个分开的词云显示不了的东西？</li></ul>
-      <h3 lang="en">Bonus · if you have time</h3><h3 lang="zh">加分任务 · 有时间再做</h3>
+    </section>
+
+    <!-- ===================== BONUS ===================== -->
+    <section id="bonus">
+      <h2><span>+</span><b lang="en">Bonus · A Different Goal</b><b lang="zh">加分任务 · 换一个目标</b></h2>
+      <p class="lede" lang="en">If you have time. Same data, same rules, a new question.</p><p class="lede" lang="zh">有时间再做。同样的数据、同样的规则，一个新的问题。</p>
       <p lang="en">Different goal, different picture. Say your goal is to train a classifier that tells praise from complaint; then neutral words do not help. Change four rules and see what appears:</p>
       <p lang="zh">目标不同，画面就不同。假设你的目标是训练一个区分称赞与抱怨的分类器，那么中性词没有帮助。改变以下四条规则，看看会出现什么：</p>
       <ol lang="en"><li>Two clouds: praise (70% or more) and complaint (30% or less), all three sources merged.</li><li>Hide the neutral words.</li><li>Colour = source: Dining, Film or Tech.</li><li>If no source gives 80% or more of a word's sentences, colour it white (shared).</li></ol>

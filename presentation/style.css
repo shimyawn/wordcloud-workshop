@@ -485,3 +485,7 @@ details.wordlist p { margin: 12px 0 0; color: var(--muted); font-size: 14px !imp
 .bonus figcaption { margin-top: 12px; }
 .bonus figcaption { color: #cfced8; font-size: clamp(13px, 1vw, 16px); line-height: 1.5; }
 .bonus figcaption b { color: var(--praise); }
+
+.demo-note { margin: 0; max-width: 640px; color: #cfced8; font-size: clamp(13px, 1vw, 16px) !important; line-height: 1.5; }
+.agenda li.ag-bonus { counter-increment: none; }
+.agenda li.ag-bonus::before { content: '+'; }
