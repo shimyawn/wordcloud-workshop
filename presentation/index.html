@@ -251,15 +251,20 @@
           <p class="mistake">Common mistake · "very" or "good" still counted after joining "not very good"</p>
         </div>
         <div class="snippet-box"><pre class="code snippet">const tokens = text.toLowerCase()
-  .replace(/n[&#x27;’]t\b/g, &#x27; not&#x27;)               // isn&#x27;t → is not
+  .replace(/n[&#x27;’]t\b/g, &#x27; not&#x27;)               // isn’t → is not
   .match(/[a-z]+/g) || [];
 
-if (NEGATORS.has(word)) {                    // not · no · never
-  // skip grammar words and &#x27;very&#x27;, then join
-  terms.add(`not ${next}`);                  // → &quot;not good&quot;
-  i = j;                                     // &#x27;good&#x27; is used up
-}
-else if (!FUNCTION_WORDS.has(word)) terms.add(word);</pre></div>
+const terms = new Set();                     // each term once per sentence
+for (let i = 0; i &lt; tokens.length; i++) {
+  const word = tokens[i];
+  if (NEGATORS.has(word)) {                  // not · no · never
+    let j = i + 1;                           // look past up to 2 words like very
+    while (j &lt;= i + 2 &amp;&amp; skippable(tokens[j])) j++;
+    terms.add(`not ${tokens[j]}`);           // → &quot;not good&quot;
+    i = j;                                   // &#x27;good&#x27; is used up
+  }
+  else if (!FUNCTION_WORDS.has(word)) terms.add(word);
+}</pre></div>
       </div>
       <aside class="notes">Read the checkpoint aloud. If the number differs, fix this step before the next one.</aside>
     </section>
@@ -278,7 +283,12 @@ else if (!FUNCTION_WORDS.has(word)) terms.add(word);</pre></div>
           <p class="cp">Checkpoint · Dining: good 69/9 84% · great 64/0 93% · food 59/61 49%</p>
           
         </div>
-        <div class="snippet-box"><pre class="code snippet">c[label === 1 ? &#x27;praise&#x27; : &#x27;complaint&#x27;] += 1;
+        <div class="snippet-box"><pre class="code snippet">for (const s of sentences) {
+  for (const term of toTerms(s.text)) {  // once per sentence
+    const c = terms.get(term);
+    c[s.label === 1 ? &#x27;praise&#x27; : &#x27;complaint&#x27;] += 1;
+  }
+}
 
 const count = c.praise + c.complaint;
 const share = (c.praise + 5) / (count + 10);   // smoothed
@@ -324,12 +334,14 @@ return { kept, leftOut: terms.length - kept.length };</pre></div>
           <p class="cp">Checkpoint · the biggest words (food, movie, phone) sit in the middle · 0 unplaced</p>
           
         </div>
-        <div class="snippet-box"><pre class="code snippet">const size = d3.scaleSqrt().domain([7, maxCount]).range([10, 40]);
+        <div class="snippet-box"><pre class="code snippet">const size = d3.scaleSqrt()
+  .domain([7, maxCount])        // one common scale
+  .range([10, fontMax]);        // fontMax grows with the screen
 
 const target = centre.x;                      // Task 2 changes this
 for (let k = 0; !spot; k++) {
   const a = k * 0.12;
-  const x = target   + 1.2 * a * Math.cos(a) * 1.6;
+  const x = target   + 1.2 * a * Math.cos(a) * squash;
   const y = centre.y + 1.2 * a * Math.sin(a);
   if (!overlaps(x, y, w, h)) spot = { x, y };
 }</pre></div>
