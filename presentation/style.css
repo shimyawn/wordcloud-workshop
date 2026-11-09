@@ -469,3 +469,10 @@ details.wordlist p { margin: 12px 0 0; color: var(--muted); font-size: 14px !imp
 .spiral-fig { margin: 0; }
 .spiral-fig svg { display: block; width: 100%; height: auto; }
 .spiral-fig figcaption { margin-top: 10px; color: var(--muted); font-size: clamp(13px, 0.95vw, 15px); line-height: 1.45; }
+
+.considered { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; margin: 10px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); max-width: 1500px; }
+.considered img { height: calc(15vh / var(--k, 1)); width: auto; border-radius: 6px; border: 1px solid var(--rule); }
+.considered figcaption { color: #cfced8; font-size: clamp(13px, 1vw, 16px); line-height: 1.5; }
+.considered figcaption b { color: var(--ink); }
+.tight-split .side .stat { margin-bottom: 0.6em; }
+.tight-split { margin-top: 8px; }
