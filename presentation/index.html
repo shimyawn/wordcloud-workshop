@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1794213741">
+  <link rel="stylesheet" href="style.css?v=1794214747">
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="present.js?v=1794213741" defer></script>
+  <script src="present.js?v=1794214747" defer></script>
 </head>
 <body>
   <nav class="nav" aria-label="Sections">
@@ -88,10 +88,11 @@
         <div class="src"><span class="site">Amazon</span><b>Tech</b><p>product reviews (phones and accessories)</p><p class="n">1,000 sentences · 500 praise · 500 complaints</p><code>Good case, Excellent value. ⇥ 1</code></div>
       </div>
       <div class="split data-split">
-        <table class="table compact">
+        <table class="table compact data-example">
+          <thead><tr><th>Source</th><th>Text</th><th>Label</th><th>Means</th></tr></thead>
           <tbody>
-            <tr><td><dfn data-g="item">Item</dfn></td><td>One sentence taken from a review, in a file per site: the sentence, a tab, then its label</td></tr>
-            <tr><td><dfn data-g="attribute">Attributes</dfn></td><td>Text · label: 1 = positive (praise), 0 = negative (complaint) · source: which site (<dfn data-g="categorical">categorical</dfn>)</td></tr>
+            <tr><td>Dining</td><td>The food was very good.</td><td>1</td><td class="praise">praise</td></tr>
+            <tr><td>Dining</td><td>The food sucked, which we expected but it sucked more than we could have imagined.</td><td>0</td><td class="complaint">complaint</td></tr>
           </tbody>
         </table>
         <div class="side">
