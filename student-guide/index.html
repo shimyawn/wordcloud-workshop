@@ -103,6 +103,15 @@ Not tasty and the texture was just nasty.<span class="tab">⇥</span>0</pre>
       <details><summary><span lang="en">Why does 50% mean "used equally in both"?</span><span lang="zh">为什么 50% 表示"两边用得一样多"？</span></summary><p lang="en">Every source is exactly 500 praise and 500 complaint sentences, so the midpoint is a true neutral point.</p><p lang="zh">每个来源恰好 500 句称赞、500 句抱怨，所以中点就是真正的中性点。</p></details>
       <details><summary><span lang="en">Can one sentence tell you whether a word is positive?</span><span lang="zh">一句话能说明一个词是正面的吗？</span></summary><p lang="en">No. The label belongs to the whole sentence. You need many sentences, counted together.</p><p lang="zh">不能。标签属于整句话，需要把许多句子合起来统计。</p></details>
       <details><summary><span lang="en">How many distinct words appear only once?</span><span lang="zh">有多少不同的词只出现一次？</span></summary><p lang="en">About 58% of 5,069. This long tail is why every word cloud must leave words out.</p><p lang="zh">5,069 个词中约 58%。这条长尾（long tail）就是每个词云都必须舍弃一些词的原因。</p></details>
+          <h3 lang="en">Why we must choose words</h3><h3 lang="zh">为什么必须挑选词语</h3>
+      <p lang="en">Our question is <b>which words people use to praise, and which to complain</b>. A cloud has limited space, so every word we keep must help answer it. Two things go wrong if we keep everything (Dining reviews):</p>
+      <p lang="zh">我们的问题是：<b>人们称赞时用哪些词，抱怨时用哪些词？</b>词云空间有限，保留的每个词都应帮助回答这个问题。如果全部保留，会出现两个问题（餐饮评论）：</p>
+      <div class="why-pair">
+        <figure><img src="img/why_nostop.png" alt=""><figcaption lang="en"><b>Grammar words kept.</b> <em>the</em> (450 of 1,000 sentences), <em>and</em> and <em>was</em> take the centre. They appear in praise and complaint alike.</figcaption><figcaption lang="zh"><b>保留语法词。</b><em>the</em>（1,000 句中 450 句）、<em>and</em>、<em>was</em> 占据中心。它们在称赞和抱怨中出现得一样多。</figcaption></figure>
+        <figure><img src="img/why_all.png" alt=""><figcaption lang="en"><b>Every word kept.</b> 2,002 words; to fit, the smallest shrink to 4 px and the cloud turns into grey noise.</figcaption><figcaption lang="zh"><b>保留所有词。</b>共 2,002 个词；为了放下，最小的缩到 4 像素，词云变成一片灰色噪声。</figcaption></figure>
+      </div>
+      <p lang="en">So we set rules from the question: preprocessing decides what we count, and a filter later decides what we show.</p>
+      <p lang="zh">因此我们根据问题制定规则：预处理决定统计什么，之后的过滤决定显示什么。</p>
           <h3 lang="en">Preprocessing: from a sentence to terms</h3><h3 lang="zh">预处理：从句子到词项</h3>
       <div class="pipeline-example">
         <div><span>Sentence</span>The food isn't very good.</div>

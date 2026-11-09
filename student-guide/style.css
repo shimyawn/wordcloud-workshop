@@ -190,3 +190,10 @@ pre.raw .tab { margin: 0 8px; color: var(--praise-text); }
 .wordlist dt { font-weight: 500; white-space: nowrap; }
 .wordlist dt span { color: var(--muted); font: 12px var(--mono); }
 .wordlist dd { margin: 0; font: 13px/1.6 var(--mono); color: #33333a; }
+
+.why-pair { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; margin: 12px 0 18px; align-items: start; }
+.why-pair figure { margin: 0; padding: 10px; border-radius: 6px; background: #0b0c10; }
+.why-pair img { display: block; width: 100%; }
+.why-pair figcaption { margin-top: 8px; color: #d8d7df; font-size: 13.5px; line-height: 1.45; }
+.why-pair figcaption b { color: #fff; }
+@media (max-width: 700px) { .why-pair { grid-template-columns: 1fr; } }
