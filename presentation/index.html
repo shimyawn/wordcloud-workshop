@@ -164,10 +164,7 @@
           <p class="stat">A word needs 7 one-sided sentences to reach 70%: that is our <dfn data-g="filter">filter</dfn>, and every cloud prints how many words it leaves out.</p>
         </div>
       </div>
-      <figure class="considered">
-        <img src="img/alt_tone_source.png" alt="Alternative design: a praise cloud and a complaint cloud, coloured by source">
-        <figcaption><b>Also considered</b> · one cloud for praise, one for complaints, colour = source (<span style="color:#ffb347">Dining</span> · <span style="color:#5cc8ff">Film</span> · <span style="color:#c792ff">Tech</span> · white = shared). It hides every neutral word, so topics like <i>food</i> or <i>phone</i> disappear, and the lean of a word is read from where it sits rather than seen at once. Colour for tone is the more direct answer to our question, so tone got the colour.</figcaption>
-      </figure>
+      <p class="considered-line"><b>Also considered</b> · colour for the source (Dining · Film · Tech) instead of tone. For our question, colour for praise and complaint is more direct, so tone got the colour. The other version is the bonus after Task 2.</p>
       <aside class="notes">Grey words are also dimmed (opacity 0.45): the biggest words are neutral nouns, and bright white would pull the eye to them first.</aside>
     </section>
 
@@ -452,12 +449,18 @@ for (let k = 0; !spot; k++) {
     <section class="slide" data-menu="6">
       <p class="label">6 · Task 2</p>
       <h2>Discussion</h2>
-      <ul class="points questions">
-        <li>Which kind of word sits in the middle, and which in the corners?</li>
-        <li>Find a praise or complaint word that stays in one corner. Why there?</li>
-        <li>What does one cloud show that three separate clouds did not?</li>
-      </ul>
-      <aside class="notes">Judgement words travel; topic words stay home. This is the main finding of the dataset, now visible in one view.</aside>
+      <div class="disc-split">
+        <ul class="points questions">
+          <li>Which kind of word sits in the middle, and which in the corners?</li>
+          <li>Find a praise or complaint word that stays in one corner. Why there?</li>
+          <li>What does one cloud show that three separate clouds did not?</li>
+        </ul>
+        <figure class="bonus">
+          <img src="img/alt_tone_source.png" alt="Bonus design: a praise cloud and a complaint cloud, coloured by source">
+          <figcaption><b>Bonus · if you have time</b> · Different goal, different picture. To train a classifier that tells praise from complaint, neutral words do not help: split praise and complaint, hide the neutral words, colour = source (<span style="color:#ffb347">Dining</span> · <span style="color:#5cc8ff">Film</span> · <span style="color:#c792ff">Tech</span> · white = shared). White words work in every domain; coloured words only in one.</figcaption>
+        </figure>
+      </div>
+      <aside class="notes">Bonus: same data, a new question. White = no source gives 80% of the sentences. For a real classifier a ranked bar chart of how strongly each word leans would be more exact; this is the readable version. Judgement words travel; topic words stay home. This is the main finding of the dataset, now visible in one view.</aside>
     </section>
 
     <!-- ===================== 7 · WRAP-UP ===================== -->
